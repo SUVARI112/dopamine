@@ -1,0 +1,7 @@
+.vscode/
+__pycache__/
+logs/
+*.log
+*.out
+log*
+results/
