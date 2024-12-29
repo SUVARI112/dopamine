@@ -32,8 +32,8 @@ import functools
 from absl import logging
 from dopamine.jax import losses
 from dopamine.labs.wncs import networks
-from dopamine.jax.agents.dqn import dqn_agent
-from dopamine.jax.agents.rainbow import rainbow_agent
+from dopamine.labs.wncs.agents import dqn_agent
+from dopamine.labs.wncs.agents import rainbow_agent
 from dopamine.jax.replay_memory import accumulator
 from dopamine.jax.replay_memory import elements
 from dopamine.jax.replay_memory import replay_buffer
