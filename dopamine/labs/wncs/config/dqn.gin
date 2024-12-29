@@ -2,8 +2,8 @@
 # match those used in Rainbow (Hessel et al., 2018), to ensure apples-to-apples
 # comparison.
 
-Environment.include_zeros = True
-Environment.cost_type = "log_cost" 
+Environment.include_zeros = False
+Environment.cost_type = "log-cost" 
 Environment.algorithm="dqn"
 
 JaxDQNAgent.gamma = 0.950
@@ -26,7 +26,7 @@ create_optimizer.eps = 1.5e-4
 create_runner.schedule = 'continuous_train'
 create_agent.agent_name = 'jax_dqn'
 create_agent.debug_mode = True
-Runner.num_iterations = 4
+Runner.num_iterations = 1
 Runner.training_steps = 250_000  # agent steps
 Runner.evaluation_steps = 500  # agent steps
 Runner.max_steps_per_episode = 500  # agent steps
