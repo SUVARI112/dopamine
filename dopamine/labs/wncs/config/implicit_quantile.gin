@@ -1,0 +1,36 @@
+# Hyperparameters follow Dabney et al. (2018), but we modify as necessary to
+# match those used in Rainbow (Hessel et al., 2018), to ensure apples-to-apples
+# comparison.
+import dopamine.jax.agents.implicit_quantile.implicit_quantile_agent
+import dopamine.discrete_domains.atari_lib
+import dopamine.discrete_domains.run_experiment
+
+JaxImplicitQuantileAgent.kappa = 1.0
+JaxImplicitQuantileAgent.num_tau_samples = 64
+JaxImplicitQuantileAgent.num_tau_prime_samples = 64
+JaxImplicitQuantileAgent.num_quantile_samples = 32
+JaxImplicitQuantileAgent.gamma = 0.99
+JaxImplicitQuantileAgent.update_horizon = 3
+JaxImplicitQuantileAgent.min_replay_history = 20_000 # agent steps
+JaxImplicitQuantileAgent.update_period = 4
+JaxImplicitQuantileAgent.target_update_period = 8_000 # agent steps
+JaxImplicitQuantileAgent.epsilon_train = 0.01
+JaxImplicitQuantileAgent.epsilon_eval = 0.001
+JaxImplicitQuantileAgent.epsilon_decay_period = 250_000  # agent steps
+JaxImplicitQuantileAgent.optimizer = 'adam'
+create_optimizer.learning_rate = 0.00005
+create_optimizer.eps = 0.0003125
+
+atari_lib.create_atari_environment.game_name = 'Pong'
+# Sticky actions with probability 0.25, as suggested by (Machado et al., 2017).
+atari_lib.create_atari_environment.sticky_actions = True
+create_runner.schedule = 'continuous_train'
+create_agent.agent_name = 'jax_implicit_quantile'
+create_agent.debug_mode = True
+Runner.num_iterations = 200
+Runner.training_steps = 250_000
+Runner.evaluation_steps = 125_000
+Runner.max_steps_per_episode = 27_000
+
+ReplayBuffer.max_capacity = 1_000_000
+ReplayBuffer.batch_size = 32

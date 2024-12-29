@@ -193,7 +193,7 @@ class Environment():
         return cost
 
     def state_cost(self, state):
-        return np.sum(np.pow(state, 2))
+        return np.sum(np.pow(state, 4))
 
     @staticmethod
     def calculate_correct_differences(arr1, arr2):

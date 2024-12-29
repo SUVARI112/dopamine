@@ -58,7 +58,8 @@ def identity_epsilon(
 @gin.configurable
 def create_optimizer(
     name='adam',
-    learning_rate=6.25e-5,
+    initial_learning_rate=6.25e-5,
+    final_learning_rate=0.0,  # Final learning rate to decay to
     beta1=0.9,
     beta2=0.999,
     eps=1.5e-4,
@@ -66,51 +67,64 @@ def create_optimizer(
     anneal_learning_rate=False,
     anneal_steps=1_000_000,
 ):
-  """Create an optimizer for training.
+    """Create an optimizer for training.
 
-  Currently, only the Adam and RMSProp optimizers are supported.
+    Currently, only the Adam, RMSProp and SGD optimizers are supported.
 
-  Args:
-    name: str, name of the optimizer to create.
-    learning_rate: float, learning rate to use in the optimizer.
-    beta1: float, beta1 parameter for the optimizer.
-    beta2: float, beta2 parameter for the optimizer.
-    eps: float, epsilon parameter for the optimizer.
-    centered: bool, centered parameter for RMSProp.
-    anneal_learning_rate: bool, whether to anneal the learning rate.
-    anneal_steps: int, number of steps to anneal the learning rate over.
+    Args:
+        name: str, name of the optimizer to create.
+        initial_learning_rate: float, starting learning rate.
+        final_learning_rate: float, final learning rate after decay.
+        beta1: float, beta1 parameter for the optimizer.
+        beta2: float, beta2 parameter for the optimizer.
+        eps: float, epsilon parameter for the optimizer.
+        centered: bool, centered parameter for RMSProp.
+        anneal_learning_rate: bool, whether to anneal the learning rate.
+        anneal_steps: int, number of steps to anneal the learning rate over.
 
-  Returns:
-    An optax optimizer.
-  """
-  learning_rate_value = learning_rate
-  if anneal_learning_rate:
-    learning_rate = optax.linear_schedule(learning_rate, 0.0, anneal_steps)
-  if name == 'adam':
-    logging.info(
-        'Creating Adam optimizer with settings lr=%f, beta1=%f, '
-        'beta2=%f, eps=%f',
-        learning_rate_value,
-        beta1,
-        beta2,
-        eps,
-    )
-    return optax.adam(learning_rate, b1=beta1, b2=beta2, eps=eps)
-  elif name == 'rmsprop':
-    logging.info(
-        'Creating RMSProp optimizer with settings lr=%f, beta2=%f, eps=%f',
-        learning_rate_value,
-        beta2,
-        eps,
-    )
-    return optax.rmsprop(learning_rate, decay=beta2, eps=eps, centered=centered)
-  elif name == 'sgd':
-    logging.info(
-        'Creating SGD optimizer with settings lr=%f', learning_rate_value
-    )
-    return optax.sgd(learning_rate)
-  else:
-    raise ValueError('Unsupported optimizer {}'.format(name))
+    Returns:
+        An optax optimizer.
+    """
+    learning_rate = initial_learning_rate
+    if anneal_learning_rate:
+        learning_rate = optax.linear_schedule(
+            init_value=initial_learning_rate,
+            end_value=final_learning_rate,
+            transition_steps=anneal_steps
+        )
+
+    if name == 'adam':
+        logging.info(
+            'Creating Adam optimizer with settings initial_lr=%f, final_lr=%f, beta1=%f, '
+            'beta2=%f, eps=%f, anneal=%s',
+            initial_learning_rate,
+            final_learning_rate,
+            beta1,
+            beta2,
+            eps,
+            anneal_learning_rate,
+        )
+        return optax.adam(learning_rate, b1=beta1, b2=beta2, eps=eps)
+    elif name == 'rmsprop':
+        logging.info(
+            'Creating RMSProp optimizer with settings initial_lr=%f, final_lr=%f, beta2=%f, eps=%f, anneal=%s',
+            initial_learning_rate,
+            final_learning_rate,
+            beta2,
+            eps,
+            anneal_learning_rate,
+        )
+        return optax.rmsprop(learning_rate, decay=beta2, eps=eps, centered=centered)
+    elif name == 'sgd':
+        logging.info(
+            'Creating SGD optimizer with settings initial_lr=%f, final_lr=%f, anneal=%s',
+            initial_learning_rate,
+            final_learning_rate,
+            anneal_learning_rate
+        )
+        return optax.sgd(learning_rate)
+    else:
+        raise ValueError('Unsupported optimizer {}'.format(name))
 
 
 @functools.partial(jax.jit, static_argnums=(0, 3, 10, 11))
