@@ -3,7 +3,7 @@
 # comparison.
 
 Environment.include_zeros = False
-Environment.cost_type = "log-cost" 
+Environment.cost_type = "state-cost" 
 Environment.algorithm="dqn"
 
 JaxDQNAgent.gamma = 0.950

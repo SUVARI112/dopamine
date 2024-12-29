@@ -31,7 +31,9 @@ from dopamine.discrete_domains import logger
 from dopamine.labs.wncs.agents import dqn_agent as jax_dqn_agent
 
 # from dopamine.jax.agents.full_rainbow import full_rainbow_agent
+from dopamine.labs.wncs.agents import full_rainbow_agent
 # from dopamine.jax.agents.implicit_quantile import implicit_quantile_agent as jax_implicit_quantile_agent
+from dopamine.labs.wncs.agents import implicit_quantile_agent as jax_implicit_quantile_agent
 # from dopamine.jax.agents.ppo import ppo_agent
 # from dopamine.jax.agents.quantile import quantile_agent as jax_quantile_agent
 # from dopamine.jax.agents.rainbow import rainbow_agent as jax_rainbow_agent
@@ -118,14 +120,14 @@ def create_agent(
     return jax_rainbow_agent.JaxRainbowAgent(
         num_actions=environment.action_space.n, observation_shape=environment.state_shape, summary_writer=summary_writer
     )
-  # elif agent_name == 'full_rainbow':
-  #   return full_rainbow_agent.JaxFullRainbowAgent(
-  #       num_actions=environment.action_space.n, summary_writer=summary_writer
-  #   )
-  # elif agent_name == 'jax_implicit_quantile':
-  #   return jax_implicit_quantile_agent.JaxImplicitQuantileAgent(
-  #       num_actions=environment.action_space.n, summary_writer=summary_writer
-  #   )
+  elif agent_name == 'full_rainbow':
+    return full_rainbow_agent.JaxFullRainbowAgent(
+        num_actions=environment.action_space.n, summary_writer=summary_writer
+    )
+  elif agent_name == 'jax_implicit_quantile':
+    return jax_implicit_quantile_agent.JaxImplicitQuantileAgent(
+        num_actions=environment.action_space.n, observation_shape=environment.state_shape, summary_writer=summary_writer
+    )
   # elif agent_name == 'ppo':
   #   return ppo_agent.PPOAgent(
   #       action_shape=environment.action_space.n,

@@ -285,7 +285,7 @@ class JaxImplicitQuantileAgent(dqn_agent.JaxDQNAgent):
       observation_shape,
       observation_dtype=jnp.uint16,
       stack_size=1,
-      network=networks.ImplicitQuantileNetwork,
+      network=networks.ImplicitQuantileNetworkWNCS,
       kappa=1.0,
       num_tau_samples=32,
       num_tau_prime_samples=32,

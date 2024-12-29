@@ -18,6 +18,7 @@ JaxRainbowAgent.epsilon_train = 0.01
 JaxRainbowAgent.epsilon_eval = 0.001
 JaxRainbowAgent.epsilon_decay_period = 50_000  # agent steps
 JaxRainbowAgent.replay_scheme = 'uniform'
+
 JaxRainbowAgent.optimizer = 'adam'
 create_optimizer.learning_rate = 0.00025
 create_optimizer.eps = 0.0003125
