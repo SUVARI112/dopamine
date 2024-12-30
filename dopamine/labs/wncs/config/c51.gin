@@ -2,7 +2,7 @@
 # modify as necessary to match those used in Rainbow (Hessel et al., 2018), to
 # ensure apples-to-apples comparison.
 
-Environment.include_zeros = True
+Environment.include_zeros = False
 Environment.cost_type = "log-cost" 
 Environment.algorithm="c51"
 
@@ -30,7 +30,7 @@ create_optimizer.eps = 0.0003125
 create_runner.schedule = 'continuous_train'
 create_agent.agent_name = 'jax_rainbow'
 create_agent.debug_mode = True
-Runner.num_iterations = 1
+Runner.num_iterations = 2
 Runner.training_steps = 250_000  # agent steps
 Runner.evaluation_steps = 500  # agent steps
 Runner.max_steps_per_episode = 500  # agent steps
