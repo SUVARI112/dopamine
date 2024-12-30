@@ -54,7 +54,6 @@ def create_wncs_environment():
 #                 np.array([[-4.233, 1.933]]))
 #     ]
 
-    plants
     plants = [
         Plant(2,
               controllability,
