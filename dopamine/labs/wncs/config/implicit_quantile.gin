@@ -14,8 +14,12 @@ JaxImplicitQuantileAgent.target_update_period = 1 # agent steps
 JaxImplicitQuantileAgent.epsilon_train = 0.01
 JaxImplicitQuantileAgent.epsilon_eval = 0.001
 JaxImplicitQuantileAgent.epsilon_decay_period = 50_000  # agent steps
+
 JaxImplicitQuantileAgent.optimizer = 'adam'
-create_optimizer.learning_rate = 0.00005
+create_optimizer.anneal_learning_rate=False
+create_optimizer.initial_learning_rate= 0.001
+create_optimizer.final_learning_rate=0.0001
+create_optimizer.anneal_steps=24_000
 create_optimizer.eps = 0.0003125
 
 atari_lib.create_atari_environment.game_name = 'Pong'
