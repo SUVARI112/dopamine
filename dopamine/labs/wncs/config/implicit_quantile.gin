@@ -23,7 +23,6 @@ create_optimizer.anneal_steps=24_000
 create_optimizer.eps = 0.0003125
 
 # Sticky actions with probability 0.25, as suggested by (Machado et al., 2017).
-atari_lib.create_atari_environment.sticky_actions = True
 create_runner.schedule = 'continuous_train'
 create_agent.agent_name = 'jax_implicit_quantile'
 create_agent.debug_mode = True
