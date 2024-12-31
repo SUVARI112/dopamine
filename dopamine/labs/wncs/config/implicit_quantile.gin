@@ -2,6 +2,10 @@
 # match those used in Rainbow (Hessel et al., 2018), to ensure apples-to-apples
 # comparison.
 
+Environment.include_zeros = True
+Environment.cost_type = "log-cost" 
+Environment.algorithm="iqn"
+
 JaxImplicitQuantileAgent.kappa = 1.0
 JaxImplicitQuantileAgent.num_tau_samples = 64
 JaxImplicitQuantileAgent.num_tau_prime_samples = 64

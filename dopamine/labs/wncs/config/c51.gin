@@ -3,7 +3,7 @@
 # ensure apples-to-apples comparison.
 
 Environment.include_zeros = True
-Environment.cost_type = "log-cost" 
+Environment.cost_type = "state-cost" 
 Environment.algorithm="c51"
 
 JaxRainbowAgent.num_atoms = 51
