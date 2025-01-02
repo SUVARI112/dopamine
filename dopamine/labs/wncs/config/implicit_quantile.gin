@@ -3,7 +3,7 @@
 # comparison.
 
 Environment.include_zeros = True
-Environment.cost_type = "state-cost" 
+Environment.cost_type = "log-cost" 
 Environment.algorithm="iqn"
 
 JaxImplicitQuantileAgent.kappa = 1.0
@@ -21,7 +21,7 @@ JaxImplicitQuantileAgent.epsilon_decay_period = 50_000  # agent steps
 
 JaxImplicitQuantileAgent.optimizer = 'adam'
 create_optimizer.anneal_learning_rate=False
-create_optimizer.initial_learning_rate= 0.001
+create_optimizer.initial_learning_rate= 5.e-4
 create_optimizer.final_learning_rate=0.0001
 create_optimizer.anneal_steps=24_000
 create_optimizer.eps = 0.0003125
