@@ -476,7 +476,7 @@ class ImplicitQuantileNetworkWNCS(nn.Module):
     )(quantile_net)
     quantile_net = nn.relu(quantile_net)
     x = state_net_tiled * quantile_net
-    x = nn.Dense(features=1024, kernel_init=initializer)(x)
+    x = nn.Dense(features=512, kernel_init=initializer)(x)
     x = nn.relu(x)
     quantile_values = nn.Dense(
         features=self.num_actions, kernel_init=initializer

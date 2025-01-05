@@ -25,6 +25,11 @@ create_optimizer.initial_learning_rate= 5.e-4
 create_optimizer.final_learning_rate=0.0001
 create_optimizer.anneal_steps=24_000
 create_optimizer.eps = 0.0003125
+# Common default values:
+# -TensorFlow's Adam: 1e-7 or 1e-8
+# -PyTorch's Adam: 1e-8
+# -JAX/Optax's Adam: 1e-8
+# -Your implementation: 1.5e-4 (relatively large, but could be fine depending on your specific problem)
 
 # Sticky actions with probability 0.25, as suggested by (Machado et al., 2017).
 create_runner.schedule = 'continuous_train'
