@@ -1,6 +1,6 @@
 # Hyperparameters follow Hessel et al. (2018), except for sticky_actions,
 # which was False (not using sticky actions) in the original paper.
-import dopamine.labs.wncs.agents.full_rainbow.full_rainbow_agent
+import dopamine.labs.wncs.agents.full_rainbow_agent
 import dopamine.labs.wncs.agents.dqn.dqn_agent
 import dopamine.labs.wncs.networks
 import dopamine.labs.wncs.atari_lib
