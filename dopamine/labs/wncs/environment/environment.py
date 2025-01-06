@@ -51,6 +51,7 @@ class Environment():
         # logging info
         self.total_cost = 0
         self.step_counter = 1
+        self.episode_number = 0
 
     def close(self):
         self.reset()
@@ -170,6 +171,7 @@ class Environment():
         return self._game_over
 
     def reset(self):
+        self.episode_number += 1
         self._game_over = False  # Reset the flag
         self.state = np.ones((2 * self.N, self.controllability + 1), dtype=int)
         for plant in self.plants:
@@ -431,6 +433,10 @@ class Environment():
         
         data = float(self.total_cost/self.step_counter)
         print(f"Average Empirical Cost: {data}")
+        print(f"---------------------------------------------")
+        print(f"number of steps passed: {self.step_counter}")
+        print(f"---------------------------------------------")
+        print(f"Episode number: {self.episode_number}")
         print(f"---------------------------------------------")
         
         existing_data.append(data)
