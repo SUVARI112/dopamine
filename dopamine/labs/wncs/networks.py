@@ -801,6 +801,21 @@ class PPOSharedNetwork(nn.Module):
     x = nn.relu(x)
     return x
 
+@gin.configurable
+class PPOSharedNetworkWCNS(nn.Module):
+  """Shared network for PPO actor and critic."""
+
+  inputs_preprocessed: bool = False
+
+  @nn.compact
+  def __call__(self, x) -> jnp.ndarray:
+    initializer = nn.initializers.orthogonal(jnp.sqrt(2))
+    if not self.inputs_preprocessed:
+      x = preprocess_atari_inputs(x)
+    x = x.reshape((-1))  # flatten
+    x = nn.Dense(features=1024, kernel_init=initializer)(x)
+    x = nn.relu(x)
+    return x
 
 @gin.configurable
 class PPOActorNetwork(nn.Module):
@@ -833,6 +848,48 @@ class PPODiscreteActorCriticNetwork(nn.Module):
   def setup(self):
     action_dim = functools.reduce(operator.mul, self.action_shape, 1)
     self._shared_network = PPOSharedNetwork(self.inputs_preprocessed)
+    self._actor = PPOActorNetwork(action_dim)
+    self._critic = PPOCriticNetwork()
+
+  def __call__(
+      self, state: jnp.ndarray, key: jnp.ndarray
+  ) -> continuous_networks.ActorCriticOutput:
+    actor_output = self.actor(state, key)
+    critic_output = self.critic(state)
+    return continuous_networks.PPOActorCriticOutput(actor_output, critic_output)
+
+  def actor(
+      self,
+      state: jnp.ndarray,
+      key: Optional[jnp.ndarray] = None,
+      action: Optional[jnp.ndarray] = None,
+  ) -> continuous_networks.PPOActorOutput:
+    logits = self._actor(self._shared_network(state))
+    dist = tfp.distributions.Categorical(logits=logits)
+    if action is None:
+      if key is None:
+        raise ValueError('Key must be provided if action is None.')
+      action = dist.sample(seed=key)
+    log_probability = dist.log_prob(action)
+    entropy = dist.entropy()
+    return continuous_networks.PPOActorOutput(action, log_probability, entropy)
+
+  def critic(self, state: jnp.ndarray) -> continuous_networks.PPOCriticOutput:
+    return continuous_networks.PPOCriticOutput(
+        self._critic(self._shared_network(state))
+    )
+  
+
+@gin.configurable
+class PPODiscreteActorCriticNetworkWCNS(nn.Module):
+  """Convolutional actor critic value and policy networks."""
+
+  action_shape: Tuple[int, ...]
+  inputs_preprocessed: bool = False
+
+  def setup(self):
+    action_dim = functools.reduce(operator.mul, self.action_shape, 1)
+    self._shared_network = PPOSharedNetworkWCNS(self.inputs_preprocessed)
     self._actor = PPOActorNetwork(action_dim)
     self._critic = PPOCriticNetwork()
 
