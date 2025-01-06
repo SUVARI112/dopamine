@@ -25,8 +25,8 @@ JaxFullRainbowAgent.dueling = True
 JaxFullRainbowAgent.double_dqn = True
 JaxFullRainbowAgent.num_atoms = 51
 # JaxFullRainbowAgent.vmax = 10.
-JaxFullRainbowAgent.vmin = -9000
-JaxFullRainbowAgent.vmax = -1000
+JaxFullRainbowAgent.vmin = -11000
+JaxFullRainbowAgent.vmax = -2000
 JaxFullRainbowAgent.replay_scheme = 'prioritized'
 
 # Note these parameters are different from C51's.
