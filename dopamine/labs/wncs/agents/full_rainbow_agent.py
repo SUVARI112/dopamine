@@ -249,6 +249,7 @@ class JaxFullRainbowAgent(dqn_agent.JaxDQNAgent):
 
   def __init__(
       self,
+      observation_shape,
       num_actions,
       noisy=True,
       dueling=True,
@@ -323,6 +324,7 @@ class JaxFullRainbowAgent(dqn_agent.JaxDQNAgent):
     self._num_updates_per_train_step = num_updates_per_train_step
 
     super().__init__(
+        observation_shape=observation_shape,
         num_actions=num_actions,
         network=functools.partial(
             network,
