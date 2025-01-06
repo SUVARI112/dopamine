@@ -122,7 +122,7 @@ def create_agent(
     )
   elif agent_name == 'full_rainbow':
     return full_rainbow_agent.JaxFullRainbowAgent(
-        num_actions=environment.action_space.n, summary_writer=summary_writer
+        num_actions=environment.action_space.n, observation_shape=environment.state_shape, summary_writer=summary_writer
     )
   elif agent_name == 'jax_implicit_quantile':
     return jax_implicit_quantile_agent.JaxImplicitQuantileAgent(
