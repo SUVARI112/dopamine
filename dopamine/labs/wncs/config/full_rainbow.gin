@@ -1,43 +1,61 @@
 # Hyperparameters follow Hessel et al. (2018), except for sticky_actions,
 # which was False (not using sticky actions) in the original paper.
-import dopamine.jax.agents.full_rainbow.full_rainbow_agent
-import dopamine.jax.agents.dqn.dqn_agent
-import dopamine.jax.networks
-import dopamine.discrete_domains.atari_lib
-import dopamine.discrete_domains.run_experiment
+import dopamine.labs.wncs.agents.full_rainbow.full_rainbow_agent
+import dopamine.labs.wncs.agents.dqn.dqn_agent
+import dopamine.labs.wncs.networks
+import dopamine.labs.wncs.atari_lib
+import dopamine.labs.wncs.run_experiment
+
+Environment.include_zeros = True
+Environment.cost_type = "log-cost" 
+Environment.algorithm="Rainbow"
 
 JaxDQNAgent.gamma = 0.99
-JaxDQNAgent.update_horizon = 3
-JaxDQNAgent.min_replay_history = 20_000  # agent steps
-JaxDQNAgent.update_period = 4
-JaxDQNAgent.target_update_period = 8_000  # agent steps
+JaxDQNAgent.update_horizon = 1
+JaxDQNAgent.min_replay_history = 5_000  # agent steps
+JaxDQNAgent.update_period = 1
+JaxDQNAgent.target_update_period = 1  # agent steps
 JaxDQNAgent.epsilon_train = 0.01
 JaxDQNAgent.epsilon_eval = 0.001
-JaxDQNAgent.epsilon_decay_period = 250_000  # agent steps
+JaxDQNAgent.epsilon_decay_period = 50_000  # agent steps
 JaxDQNAgent.optimizer = 'adam'
 
 JaxFullRainbowAgent.noisy = True
 JaxFullRainbowAgent.dueling = True
 JaxFullRainbowAgent.double_dqn = True
 JaxFullRainbowAgent.num_atoms = 51
-JaxFullRainbowAgent.vmax = 10.
+# JaxFullRainbowAgent.vmax = 10.
+JaxFullRainbowAgent.vmin = -9000
+JaxFullRainbowAgent.vmax = -1000
 JaxFullRainbowAgent.replay_scheme = 'prioritized'
 
 # Note these parameters are different from C51's.
-create_optimizer.learning_rate = 0.0000625
+# create_optimizer.learning_rate = 0.0000625
+create_optimizer.anneal_learning_rate=False
+create_optimizer.initial_learning_rate= 5.e-4
 create_optimizer.eps = 0.00015
 
-atari_lib.create_atari_environment.game_name = 'Pong'
 # Sticky actions with probability 0.25, as suggested by (Machado et al., 2017).
-atari_lib.create_atari_environment.sticky_actions = True
-create_runner.schedule = 'continuous_train'
-create_agent.agent_name = 'full_rainbow'
-create_agent.debug_mode = True
-Runner.num_iterations = 200
-Runner.training_steps = 250_000  # agent steps
-Runner.evaluation_steps = 125_000  # agent steps
-Runner.max_steps_per_episode = 27_000  # agent steps
+# create_runner.schedule = 'continuous_train'
+# create_agent.agent_name = 'full_rainbow'
+# create_agent.debug_mode = True
+# Runner.num_iterations = 200
+# Runner.training_steps = 250_000  # agent steps
+# Runner.evaluation_steps = 125_000  # agent steps
+# Runner.max_steps_per_episode = 27_000  # agent steps
 
 ReplayBuffer.max_capacity = 1_000_000
 ReplayBuffer.batch_size = 32
 PrioritizedSamplingDistribution.max_capacity = 1_000_000
+
+create_runner.schedule = 'continuous_train'
+create_agent.agent_name = 'full_rainbow'
+create_agent.debug_mode = True
+Runner.num_iterations = 1
+Runner.training_steps = 250_000
+Runner.evaluation_steps = 500
+Runner.max_steps_per_episode = 500
+
+ReplayBuffer.max_capacity = 20_000
+ReplayBuffer.batch_size = 32
+PrioritizedSamplingDistribution.max_capacity = 20_000
