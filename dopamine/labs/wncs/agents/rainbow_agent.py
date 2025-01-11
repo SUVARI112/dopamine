@@ -200,7 +200,7 @@ def select_action(
 
   rng, rng1, rng2 = jax.random.split(rng, num=3)
   p = jax.random.uniform(rng1)
-
+  print("deeeeeeeeeeeeeeeeeeeeeeeeeeebuuuuuuuuuuuuuuuuuuuuuuuuuuuuuug")
   print(epsilon)
   return rng, jnp.where(
       p <= epsilon,
