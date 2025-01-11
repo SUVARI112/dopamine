@@ -3,12 +3,12 @@
 # ensure apples-to-apples comparison.
 
 Environment.include_zeros = True
-Environment.cost_type = "log-cost" 
+Environment.cost_type = "state-cost" 
 Environment.algorithm="c51"
 
 JaxRainbowAgent.num_atoms = 51
-JaxRainbowAgent.vmin = -9000
-JaxRainbowAgent.vmax = -1000
+JaxRainbowAgent.vmin = -30000
+JaxRainbowAgent.vmax = -200
 JaxRainbowAgent.gamma = 0.99
 JaxRainbowAgent.update_horizon = 1
 JaxRainbowAgent.min_replay_history = 1_000  # agent steps
