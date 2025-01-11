@@ -8,7 +8,8 @@ Environment.algorithm="dqn"
 
 JaxDQNAgent.gamma = 0.950
 JaxDQNAgent.update_horizon = 1
-JaxDQNAgent.min_replay_history = 4_000  # agent steps
+JaxDQNAgent.min_replay_history = 1_000  # agent steps
+JaxDQNAgent.warm_start_steps = 5_000
 JaxDQNAgent.update_period = 1
 JaxDQNAgent.target_update_period = 1  # agent steps
 JaxDQNAgent.epsilon_train = 0.01

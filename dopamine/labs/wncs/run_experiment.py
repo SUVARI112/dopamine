@@ -197,7 +197,7 @@ class Runner(object):
       training_steps=250000,
       evaluation_steps=125000,
       max_steps_per_episode=27000,
-      clip_rewards=True,
+      clip_rewards=False,
       use_legacy_logger=True,
       fine_grained_print_to_console=True,
   ):

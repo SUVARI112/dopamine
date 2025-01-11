@@ -211,7 +211,7 @@ def linearly_decaying_epsilon(decay_period, step, warmup_steps, epsilon):
   return epsilon + bonus
 
 
-@functools.partial(jax.jit, static_argnums=(0, 4, 5, 6, 7, 8, 10, 11))
+@functools.partial(jax.jit, static_argnums=(0, 4, 5, 6, 7, 8, 10, 11, 12))
 def select_action(
     network_def,
     params,
@@ -223,6 +223,7 @@ def select_action(
     epsilon_train,
     epsilon_decay_period,
     training_steps,
+    warm_start_steps,
     min_replay_history,
     epsilon_fn,
 ):
@@ -257,7 +258,7 @@ def select_action(
       epsilon_fn(
           epsilon_decay_period,
           training_steps,
-          min_replay_history,
+          min_replay_history + warm_start_steps,
           epsilon_train,
       ),
   )
@@ -284,6 +285,7 @@ class JaxDQNAgent(object):
       network=networks.NatureDQNNetworkWNCS,
       gamma=0.99,
       update_horizon=1,
+      warm_start_steps=1000,
       min_replay_history=20000,
       update_period=4,
       target_update_period=8000,
@@ -383,6 +385,7 @@ class JaxDQNAgent(object):
     self.update_horizon = update_horizon
     self.cumulative_gamma = math.pow(gamma, update_horizon)
     self.min_replay_history = min_replay_history
+    self.warm_start_steps = warm_start_steps
     self.target_update_period = target_update_period
     self.epsilon_fn = epsilon_fn
     self.epsilon_train = epsilon_train
@@ -503,6 +506,7 @@ class JaxDQNAgent(object):
         self.epsilon_train,
         self.epsilon_decay_period,
         self.training_steps,
+        self.warm_start_steps,
         self.min_replay_history,
         self.epsilon_fn,
     )
@@ -540,6 +544,7 @@ class JaxDQNAgent(object):
         self.epsilon_train,
         self.epsilon_decay_period,
         self.training_steps,
+        self.warm_start_steps,
         self.min_replay_history,
         self.epsilon_fn,
     )

@@ -40,6 +40,7 @@ ContinuousTrainRunner.create_environment_fn = @gym_lib.create_gym_environment
 ContinuousRunner.num_iterations = 500
 ContinuousRunner.training_steps = 2048
 ContinuousRunner.max_steps_per_episode = None
+# Runner.clip_rewards
 
 ReplayBuffer.max_capacity = 2048
 ReplayBuffer.batch_size = 2048

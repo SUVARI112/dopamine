@@ -54,7 +54,7 @@ def zero_epsilon(
   return 0.0
 
 
-@functools.partial(jax.jit, static_argnums=(0, 4, 5, 6, 7, 8, 10, 11))
+@functools.partial(jax.jit, static_argnums=(0, 4, 5, 6, 7, 8, 10, 11, 12))
 def select_action(
     network_def,
     params,
@@ -66,6 +66,7 @@ def select_action(
     epsilon_train,
     epsilon_decay_period,
     training_steps,
+    warm_start_steps,
     min_replay_history,
     epsilon_fn,
     support,
@@ -77,7 +78,7 @@ def select_action(
       epsilon_fn(
           epsilon_decay_period,
           training_steps,
-          min_replay_history,
+          min_replay_history + warm_start_steps,
           epsilon_train,
       ),
   )
@@ -262,6 +263,7 @@ class JaxFullRainbowAgent(dqn_agent.JaxDQNAgent):
       vmax=10.0,
       vmin=None,
       epsilon_fn=dqn_agent.linearly_decaying_epsilon,
+      warm_start_steps=1000,
       replay_scheme='prioritized',
       summary_writer=None,
       seed=None,
@@ -333,6 +335,7 @@ class JaxFullRainbowAgent(dqn_agent.JaxDQNAgent):
             dueling=self._dueling,
             distributional=self._distributional,
         ),
+        warm_start_steps = warm_start_steps,
         epsilon_fn=zero_epsilon if self._noisy else epsilon_fn,
         summary_writer=summary_writer,
         seed=seed,
@@ -520,6 +523,7 @@ class JaxFullRainbowAgent(dqn_agent.JaxDQNAgent):
         self.epsilon_train,
         self.epsilon_decay_period,
         self.training_steps,
+        self.warm_start_steps,
         self.min_replay_history,
         self.epsilon_fn,
         self._support,
@@ -548,6 +552,7 @@ class JaxFullRainbowAgent(dqn_agent.JaxDQNAgent):
         self.epsilon_train,
         self.epsilon_decay_period,
         self.training_steps,
+        self.warm_start_steps,
         self.min_replay_history,
         self.epsilon_fn,
         self._support,

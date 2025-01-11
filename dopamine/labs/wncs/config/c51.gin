@@ -11,7 +11,8 @@ JaxRainbowAgent.vmin = -9000
 JaxRainbowAgent.vmax = -1000
 JaxRainbowAgent.gamma = 0.99
 JaxRainbowAgent.update_horizon = 1
-JaxRainbowAgent.min_replay_history = 5000  # agent steps
+JaxRainbowAgent.min_replay_history = 1_000  # agent steps
+JaxRainbowAgent.warm_start_steps = 5_000
 JaxRainbowAgent.update_period = 1
 JaxRainbowAgent.target_update_period = 1  # agent steps
 JaxRainbowAgent.epsilon_train = 0.01
@@ -33,6 +34,7 @@ Runner.num_iterations = 1
 Runner.training_steps = 250_000  # agent steps
 Runner.evaluation_steps = 500  # agent steps
 Runner.max_steps_per_episode = 500  # agent steps
+Runner.clip_rewards=False
 
 ReplayBuffer.max_capacity = 250_000
 ReplayBuffer.batch_size = 32

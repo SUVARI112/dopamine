@@ -205,7 +205,7 @@ def train(
   return rng, optimizer_state, online_params, loss
 
 
-@functools.partial(jax.jit, static_argnums=(0, 4, 5, 6, 7, 8, 9, 11, 12))
+@functools.partial(jax.jit, static_argnums=(0, 4, 5, 6, 7, 8, 9, 11, 12, 13))
 def select_action(
     network_def,
     params,
@@ -218,6 +218,7 @@ def select_action(
     epsilon_train,
     epsilon_decay_period,
     training_steps,
+    warm_start_steps,
     min_replay_history,
     epsilon_fn,
 ):
@@ -253,7 +254,7 @@ def select_action(
       epsilon_fn(
           epsilon_decay_period,
           training_steps,
-          min_replay_history,
+          min_replay_history + warm_start_steps,
           epsilon_train,
       ),
   )
@@ -294,6 +295,7 @@ class JaxImplicitQuantileAgent(dqn_agent.JaxDQNAgent):
       double_dqn=False,
       gamma=0.99,
       update_horizon=1,
+      warm_start_steps=1000,
       min_replay_history=20000,
       update_period=4,
       target_update_period=8000,
@@ -378,6 +380,7 @@ class JaxImplicitQuantileAgent(dqn_agent.JaxDQNAgent):
         ),
         gamma=gamma,
         update_horizon=update_horizon,
+        warm_start_steps=warm_start_steps,
         min_replay_history=min_replay_history,
         update_period=update_period,
         target_update_period=target_update_period,
@@ -427,6 +430,7 @@ class JaxImplicitQuantileAgent(dqn_agent.JaxDQNAgent):
         self.epsilon_train,
         self.epsilon_decay_period,
         self.training_steps,
+        self.warm_start_steps,
         self.min_replay_history,
         self.epsilon_fn,
     )
@@ -465,6 +469,7 @@ class JaxImplicitQuantileAgent(dqn_agent.JaxDQNAgent):
         self.epsilon_train,
         self.epsilon_decay_period,
         self.training_steps,
+        self.warm_start_steps,
         self.min_replay_history,
         self.epsilon_fn,
     )
