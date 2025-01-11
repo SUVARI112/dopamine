@@ -200,6 +200,8 @@ def select_action(
 
   rng, rng1, rng2 = jax.random.split(rng, num=3)
   p = jax.random.uniform(rng1)
+  if epsilon < 1:
+    print("optimizing baabaaaay")
   return rng, jnp.where(
       p <= epsilon,
       jax.random.randint(rng2, (), 0, num_actions),
