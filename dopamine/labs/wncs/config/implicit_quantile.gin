@@ -2,7 +2,7 @@
 # match those used in Rainbow (Hessel et al., 2018), to ensure apples-to-apples
 # comparison.
 
-Environment.include_zeros = True
+Environment.include_zeros = False
 Environment.cost_type = "state-cost" 
 Environment.algorithm="iqn"
 

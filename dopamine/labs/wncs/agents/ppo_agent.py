@@ -122,41 +122,6 @@ def train(
       ).log_probability
   )(states, actions)
   log_probability = jax.lax.stop_gradient(log_probability)
-
-  # batch_keys = jnp.stack(jax.random.split(key, num=states.shape[0]))
-  # sampled_actions = jax.vmap(
-  #     lambda state, key: network_def.apply(
-  #         network_params, state, key=key, method=network_def.actor
-  #     ).sampled_action
-  # )(states, batch_keys)
-  # sampled_actions = jnp.mean(sampled_actions, axis=0)
-
-  # (
-  #     num_batches,
-  #     states,
-  #     actions,
-  #     returns,
-  #     advantages,
-  #     log_probability,
-  #     q_values,
-  # ) = create_minibatches_and_shuffle(
-  #     states,
-  #     actions,
-  #     returns,
-  #     advantages,
-  #     log_probability,
-  #     q_values,
-  #     batch_size,
-  #     key,
-  # )
-
-  # loss_stats = {
-  #     'combined_loss': [],
-  #     'actor_loss': [],
-  #     'critic_loss': [],
-  #     'entropy_loss': [],
-  # }
-
   batch_keys = jnp.stack(jax.random.split(key, num=states.shape[0]))
   sampled_actions = jax.vmap(
       lambda state, key: network_def.apply(
@@ -452,7 +417,6 @@ def select_action(network_def, params, state, rng):
 @gin.configurable
 class PPOAgent(dqn_agent.JaxDQNAgent):
   """A JAX implementation of the PPO agent."""
-
   def __init__(
       self,
       action_shape,
@@ -461,9 +425,9 @@ class PPOAgent(dqn_agent.JaxDQNAgent):
       stack_size=1,
       update_horizon=1,
       network=networks.PPODiscreteActorCriticNetworkWCNS,
-      num_layers=2,
-      hidden_units=64,
-      activation='tanh',
+      num_layers=3,
+      hidden_units=128,
+      activation='relu',
       update_period=2048,
       num_epochs=10,
       batch_size=64,
@@ -471,7 +435,7 @@ class PPOAgent(dqn_agent.JaxDQNAgent):
       lambda_=0.95,
       epsilon=0.2,
       vf_coefficient=0.5,
-      entropy_coefficient=0.0,
+      entropy_coefficient=0.05,
       clip_critic_loss=True,
       eval_mode=False,
       optimizer='adam',
@@ -479,7 +443,7 @@ class PPOAgent(dqn_agent.JaxDQNAgent):
       summary_writer=None,
       summary_writing_frequency=1,
       allow_partial_reload=False,
-      seed=None,
+      seed=42,
       collector_allowlist='tensorboard',
   ):
     r"""Initializes the agent and constructs the necessary components.
@@ -550,18 +514,18 @@ class PPOAgent(dqn_agent.JaxDQNAgent):
     if action_limits is not None:
       action_limits = tuple(tuple(x.reshape(-1)) for x in action_limits)
     self.observation_shape = tuple(observation_shape)
-    if network.__name__ == 'PPOActorCriticNetwork':
-      self.network_def = network(
-          action_shape=action_shape,
-          action_limits=action_limits,
-          num_layers=num_layers,
-          hidden_units=hidden_units,
-          activation=continuous_networks.create_activation(activation),
-      )
+    if network.__name__ == 'PPODiscreteActorCriticNetworkWCNS':
+        self.network_def = network(
+            action_shape=action_shape,
+            num_layers=num_layers,
+            hidden_units=hidden_units,
+            activation=activation,
+            inputs_preprocessed=False,
+        )
     else:
-      self.network_def = network(
-          action_shape=action_shape
-      )
+        self.network_def = network(
+            action_shape=action_shape
+        )
     self.stack_size = stack_size
     self.update_horizon = update_horizon
     self.update_period = update_period
