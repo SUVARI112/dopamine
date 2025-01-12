@@ -6,8 +6,8 @@ import dopamine.labs.wncs.networks
 import dopamine.labs.wncs.atari_lib
 import dopamine.labs.wncs.run_experiment
 
-Environment.include_zeros = False
-Environment.cost_type = "state-cost" 
+Environment.include_zeros = True
+Environment.cost_type = "log-cost" 
 Environment.algorithm="rainbow"
 
 JaxDQNAgent.gamma = 0.99
