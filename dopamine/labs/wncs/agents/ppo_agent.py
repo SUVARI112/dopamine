@@ -123,38 +123,55 @@ def train(
   )(states, actions)
   log_probability = jax.lax.stop_gradient(log_probability)
 
+  # batch_keys = jnp.stack(jax.random.split(key, num=states.shape[0]))
+  # sampled_actions = jax.vmap(
+  #     lambda state, key: network_def.apply(
+  #         network_params, state, key=key, method=network_def.actor
+  #     ).sampled_action
+  # )(states, batch_keys)
+  # sampled_actions = jnp.mean(sampled_actions, axis=0)
+
+  # (
+  #     num_batches,
+  #     states,
+  #     actions,
+  #     returns,
+  #     advantages,
+  #     log_probability,
+  #     q_values,
+  # ) = create_minibatches_and_shuffle(
+  #     states,
+  #     actions,
+  #     returns,
+  #     advantages,
+  #     log_probability,
+  #     q_values,
+  #     batch_size,
+  #     key,
+  # )
+
+  # loss_stats = {
+  #     'combined_loss': [],
+  #     'actor_loss': [],
+  #     'critic_loss': [],
+  #     'entropy_loss': [],
+  # }
+
   batch_keys = jnp.stack(jax.random.split(key, num=states.shape[0]))
   sampled_actions = jax.vmap(
       lambda state, key: network_def.apply(
           network_params, state, key=key, method=network_def.actor
       ).sampled_action
   )(states, batch_keys)
-  sampled_actions = jnp.mean(sampled_actions, axis=0)
-
-  (
-      num_batches,
-      states,
-      actions,
-      returns,
-      advantages,
-      log_probability,
-      q_values,
-  ) = create_minibatches_and_shuffle(
-      states,
-      actions,
-      returns,
-      advantages,
-      log_probability,
-      q_values,
-      batch_size,
-      key,
-  )
+  # Instead of taking mean, keep discrete actions
+  sampled_actions = jnp.array(sampled_actions)
 
   loss_stats = {
       'combined_loss': [],
       'actor_loss': [],
       'critic_loss': [],
       'entropy_loss': [],
+      'sampled_actions': sampled_actions.mean(),  # Add aggregate statistic
   }
   for _ in range(num_epochs):
     for i in range(num_batches):
