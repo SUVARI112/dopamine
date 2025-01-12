@@ -12,11 +12,6 @@ PPOAgent.num_layers = 2
 PPOAgent.hidden_units = 128
 PPOAgent.activation = 'tanh'
 
-# Configuring the network to use the PPOAgent's hyperparameters
-PPODiscreteActorCriticNetworkWCNS.num_layers = @PPOAgent.num_layers
-PPODiscreteActorCriticNetworkWCNS.hidden_units = @PPOAgent.hidden_units
-PPODiscreteActorCriticNetworkWCNS.activation = @PPOAgent.activation
-
 PPOAgent.update_period = 100
 PPOAgent.optimizer = 'adam'
 PPOAgent.max_gradient_norm = 0.5
