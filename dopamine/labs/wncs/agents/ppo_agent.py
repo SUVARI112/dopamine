@@ -163,37 +163,55 @@ def train(
           network_params, state, key=key, method=network_def.actor
       ).sampled_action
   )(states, batch_keys)
-  # Instead of taking mean, keep discrete actions
   sampled_actions = jnp.array(sampled_actions)
+
+  (
+      num_batches,
+      states,
+      actions,
+      returns,
+      advantages,
+      log_probability,
+      q_values,
+  ) = create_minibatches_and_shuffle(
+      states,
+      actions,
+      returns,
+      advantages,
+      log_probability,
+      q_values,
+      batch_size,
+      key,
+  )
 
   loss_stats = {
       'combined_loss': [],
       'actor_loss': [],
       'critic_loss': [],
       'entropy_loss': [],
-      'sampled_actions': sampled_actions.mean(),  # Add aggregate statistic
   }
+
   for _ in range(num_epochs):
-    for i in range(num_batches):
-      network_params, optimizer_state, aux_vars = train_minibatch(
-          network_def,
-          network_params,
-          optim,
-          optimizer_state,
-          states[i],
-          actions[i],
-          returns[i],
-          advantages[i],
-          log_probability[i],
-          q_values[i],
-          epsilon,
-          vf_coefficient,
-          entropy_coefficient,
-          clip_critic_loss,
-      )
-      for k, v in aux_vars.items():
-        if k in loss_stats:
-          loss_stats[k].append(v.item())
+      for i in range(num_batches):
+          network_params, optimizer_state, aux_vars = train_minibatch(
+              network_def,
+              network_params,
+              optim,
+              optimizer_state,
+              states[i],
+              actions[i],
+              returns[i],
+              advantages[i],
+              log_probability[i],
+              q_values[i],
+              epsilon,
+              vf_coefficient,
+              entropy_coefficient,
+              clip_critic_loss,
+          )
+          for k, v in aux_vars.items():
+              if k in loss_stats:
+                  loss_stats[k].append(v.item())
 
   loss_stats = {
       'Losses/Combined': np.mean(loss_stats.get('combined_loss', 0.0)),
@@ -201,8 +219,11 @@ def train(
       'Losses/Critic': np.mean(loss_stats.get('critic_loss', 0.0)),
       'Losses/Entropy': np.mean(loss_stats.get('entropy_loss', 0.0)),
   }
-  for i, a in enumerate(sampled_actions):
-    loss_stats.update({f'Values/SampledAction{i}': a})
+
+  # Add mean action statistics
+  if len(sampled_actions.shape) > 0:  # If not scalar
+      loss_stats.update({'Values/MeanAction': np.mean(sampled_actions)})
+
   return network_params, optimizer_state, loss_stats
 
 
