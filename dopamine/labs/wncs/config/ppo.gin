@@ -18,11 +18,11 @@ PPOAgent.max_gradient_norm = 0.5
 create_optimizer.anneal_learning_rate=False
 create_optimizer.initial_learning_rate= 3e-4
 create_optimizer.final_learning_rate=3e-5
-create_optimizer.anneal_steps=5_000
+create_optimizer.anneal_steps=50_000
 create_optimizer.eps = 1e-5
 
 PPOAgent.num_epochs = 10
-PPOAgent.batch_size = 64
+PPOAgent.batch_size = 60
 PPOAgent.gamma = 0.99
 PPOAgent.lambda_ = 0.95
 PPOAgent.epsilon = 0.2
