@@ -419,7 +419,7 @@ class PPOAgent(dqn_agent.JaxDQNAgent):
       self,
       action_shape,
       observation_shape,
-      action_limits,
+      action_limits=None,
       stack_size=1,
       update_horizon=1,
       network=networks.PPODiscreteActorCriticNetworkWCNS,
