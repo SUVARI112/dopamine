@@ -2,18 +2,11 @@
 #   "Proximal Policy Optimization Algorithms"
 #   by John Schulman et al.
 #   https://arxiv.org/abs/1707.06347
-import dopamine.continuous_domains.run_experiment
-import dopamine.discrete_domains.gym_lib
-import dopamine.jax.agents.ppo.ppo_agent
-import dopamine.jax.agents.dqn.dqn_agent
-import dopamine.jax.continuous_networks
-import dopamine.jax.replay_memory.replay_buffer
 
-PPOAgent.network = @continuous_networks.PPOActorCriticNetwork
 PPOAgent.num_layers = 2
 PPOAgent.hidden_units = 64
 PPOAgent.activation = 'tanh'
-PPOAgent.update_period = 2048
+PPOAgent.update_period = 100
 PPOAgent.optimizer = 'adam'
 PPOAgent.max_gradient_norm = 0.5
 create_optimizer.learning_rate = 3e-4
@@ -30,17 +23,27 @@ PPOAgent.entropy_coefficient = 0.0
 PPOAgent.clip_critic_loss = True
 PPOAgent.seed = None  # Seed with the current time
 
-create_gym_environment.environment_name = 'HalfCheetah'
-create_gym_environment.version = 'v2'
-create_gym_environment.use_legacy_gym = True
-create_gym_environment.use_ppo_preprocessing = True
-create_continuous_runner.schedule = 'continuous_train'
-create_continuous_agent.agent_name = 'ppo'
-ContinuousTrainRunner.create_environment_fn = @gym_lib.create_gym_environment
-ContinuousRunner.num_iterations = 500
-ContinuousRunner.training_steps = 2048
-ContinuousRunner.max_steps_per_episode = None
+
+Environment.include_zeros = True
+Environment.cost_type = "log-cost" 
+Environment.algorithm="ppo"
+
+# create_gym_environment.use_ppo_preprocessing = True
+# create_continuous_runner.schedule = 'continuous_train'
+# create_continuous_agent.agent_name = 'ppo'
+# ContinuousTrainRunner.create_environment_fn = @gym_lib.create_gym_environment
+# ContinuousRunner.num_iterations = 500
+# ContinuousRunner.training_steps = 2048
+# ContinuousRunner.max_steps_per_episode = None
 # Runner.clip_rewards
+create_runner.schedule = 'continuous_train'
+create_agent.agent_name = 'ppo'
+create_agent.debug_mode = True
+Runner.num_iterations = 1
+Runner.training_steps = 250_000
+Runner.evaluation_steps = 500
+Runner.max_steps_per_episode = 500
+Runner.clip_rewards=False
 
 ReplayBuffer.max_capacity = 2048
 ReplayBuffer.batch_size = 2048

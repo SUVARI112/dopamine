@@ -12,7 +12,8 @@ JaxImplicitQuantileAgent.num_tau_prime_samples = 64
 JaxImplicitQuantileAgent.num_quantile_samples = 32
 JaxImplicitQuantileAgent.gamma = 0.95
 JaxImplicitQuantileAgent.update_horizon = 1
-JaxImplicitQuantileAgent.min_replay_history = 5_000 # agent steps
+JaxImplicitQuantileAgent.min_replay_history = 1_000  # agent steps
+JaxImplicitQuantileAgent.warm_start_steps = 5_000
 JaxImplicitQuantileAgent.update_period = 1
 JaxImplicitQuantileAgent.target_update_period = 1 # agent steps
 JaxImplicitQuantileAgent.epsilon_train = 0.01
@@ -39,6 +40,7 @@ Runner.num_iterations = 1
 Runner.training_steps = 250_000
 Runner.evaluation_steps = 500
 Runner.max_steps_per_episode = 500
+Runner.clip_rewards=False
 
 ReplayBuffer.max_capacity = 20_000
 ReplayBuffer.batch_size = 32

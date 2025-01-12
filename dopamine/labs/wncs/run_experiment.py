@@ -34,7 +34,7 @@ from dopamine.labs.wncs.agents import dqn_agent as jax_dqn_agent
 from dopamine.labs.wncs.agents import full_rainbow_agent
 # from dopamine.jax.agents.implicit_quantile import implicit_quantile_agent as jax_implicit_quantile_agent
 from dopamine.labs.wncs.agents import implicit_quantile_agent as jax_implicit_quantile_agent
-# from dopamine.jax.agents.ppo import ppo_agent
+from dopamine.labs.wncs.agents import ppo_agent
 # from dopamine.jax.agents.quantile import quantile_agent as jax_quantile_agent
 # from dopamine.jax.agents.rainbow import rainbow_agent as jax_rainbow_agent
 from dopamine.labs.wncs.agents import rainbow_agent as jax_rainbow_agent
@@ -128,13 +128,13 @@ def create_agent(
     return jax_implicit_quantile_agent.JaxImplicitQuantileAgent(
         num_actions=environment.action_space.n, observation_shape=environment.state_shape, summary_writer=summary_writer
     )
-  # elif agent_name == 'ppo':
-  #   return ppo_agent.PPOAgent(
-  #       action_shape=environment.action_space.n,
-  #       observation_shape=dqn_agent.NATURE_DQN_OBSERVATION_SHAPE,
-  #       stack_size=dqn_agent.NATURE_DQN_STACK_SIZE,
-  #       summary_writer=summary_writer,
-  #   )
+  elif agent_name == 'ppo':
+    return ppo_agent.PPOAgent(
+        action_shape=environment.action_space.n,
+        observation_shape=environment.state_shape,
+        stack_size=1,
+        summary_writer=summary_writer,
+    )
   else:
     raise ValueError('Unknown agent: {}'.format(agent_name))
 
