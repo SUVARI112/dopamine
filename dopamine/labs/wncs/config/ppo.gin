@@ -6,20 +6,28 @@
 PPOAgent.num_layers = 2
 PPOAgent.hidden_units = 64
 PPOAgent.activation = 'tanh'
-PPOAgent.update_period = 100
+PPOAgent.update_period = 20
 PPOAgent.optimizer = 'adam'
 PPOAgent.max_gradient_norm = 0.5
-create_optimizer.learning_rate = 3e-4
+
+# create_optimizer.learning_rate = 3e-4
+# create_optimizer.eps = 1e-5
+# create_optimizer.anneal_learning_rate = True
+# create_optimizer.anneal_steps = 160_000  # 500 iterations * 10 epochs * 2048 timesteps / 64 batches
+
+create_optimizer.anneal_learning_rate=False
+create_optimizer.initial_learning_rate= 3e-4
+create_optimizer.final_learning_rate=3e-5
+create_optimizer.anneal_steps=5_000
 create_optimizer.eps = 1e-5
-create_optimizer.anneal_learning_rate = True
-create_optimizer.anneal_steps = 160_000  # 500 iterations * 10 epochs * 2048 timesteps / 64 batches
+
 PPOAgent.num_epochs = 10
 PPOAgent.batch_size = 64
 PPOAgent.gamma = 0.99
 PPOAgent.lambda_ = 0.95
 PPOAgent.epsilon = 0.2
 PPOAgent.vf_coefficient = 0.5
-PPOAgent.entropy_coefficient = 0.0
+PPOAgent.entropy_coefficient = 0.01
 PPOAgent.clip_critic_loss = True
 PPOAgent.seed = None  # Seed with the current time
 
