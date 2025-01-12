@@ -28,7 +28,7 @@ create_optimizer.anneal_steps=50_000
 create_optimizer.eps = 1e-5
 
 PPOAgent.num_epochs = 10
-PPOAgent.batch_size = 25
+PPOAgent.batch_size = 20
 PPOAgent.gamma = 0.99
 PPOAgent.lambda_ = 0.95
 PPOAgent.epsilon = 0.2
