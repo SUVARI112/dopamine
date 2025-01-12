@@ -53,5 +53,5 @@ Runner.evaluation_steps = 500
 Runner.max_steps_per_episode = 500
 Runner.clip_rewards=False
 
-ReplayBuffer.max_capacity = 2048
-ReplayBuffer.batch_size = 2048
+ReplayBuffer.max_capacity = 20
+ReplayBuffer.batch_size = 20
