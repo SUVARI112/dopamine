@@ -8,7 +8,7 @@
 # PPOAgent.activation = 'tanh'
 
 # Hyperparameters for PPOAgent
-PPOAgent.num_layers = 2
+PPOAgent.num_layers = 1
 PPOAgent.hidden_units = 256
 PPOAgent.activation = 'tanh'
 
