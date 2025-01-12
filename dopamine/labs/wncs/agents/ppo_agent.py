@@ -521,7 +521,9 @@ class PPOAgent(dqn_agent.JaxDQNAgent):
           activation=continuous_networks.create_activation(activation),
       )
     else:
-      self.network_def = network()
+      self.network_def = network(
+          action_shape=action_shape
+      )
     self.stack_size = stack_size
     self.update_horizon = update_horizon
     self.update_period = update_period
