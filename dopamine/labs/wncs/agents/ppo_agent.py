@@ -24,10 +24,9 @@ import functools
 import time
 
 from absl import logging
-from dopamine.jax import continuous_networks
 from dopamine.labs.wncs import networks
 from dopamine.jax import losses
-from dopamine.jax.agents.dqn import dqn_agent
+from dopamine.labs.wncs.agents import dqn_agent
 from dopamine.jax.replay_memory import accumulator
 from dopamine.jax.replay_memory import replay_buffer
 from dopamine.jax.replay_memory import samplers
