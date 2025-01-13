@@ -38,7 +38,7 @@ PPOAgent.clip_critic_loss = True
 PPOAgent.seed = None  # Seed with the current time
 
 
-Environment.include_zeros = True
+Environment.include_zeros = False
 Environment.cost_type = "log-cost" 
 Environment.algorithm="ppo"
 
