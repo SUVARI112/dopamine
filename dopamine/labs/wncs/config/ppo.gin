@@ -39,7 +39,7 @@ PPOAgent.seed = None  # Seed with the current time
 
 
 Environment.include_zeros = False
-Environment.cost_type = "else" 
+Environment.cost_type = "log-cost" 
 Environment.algorithm="ppo"
 
 # create_gym_environment.use_ppo_preprocessing = True
