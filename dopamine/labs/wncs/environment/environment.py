@@ -159,6 +159,8 @@ class Environment():
             cost = self.log_cost(empirical_cost[0][0].copy())
         elif self.cost_type == "state-cost":
             cost = self.state_cost(self.state)
+        else:
+            cost = empirical_cost[0][0].copy()
 
         self.step_counter += 1
         self.total_cost += empirical_cost
