@@ -12,7 +12,7 @@ PPOAgent.num_layers = 1
 PPOAgent.hidden_units = 512
 PPOAgent.activation = 'tanh'
 
-PPOAgent.update_period = 50
+PPOAgent.update_period = 20
 PPOAgent.optimizer = 'adam'
 PPOAgent.max_gradient_norm = 0.5
 
