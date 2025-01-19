@@ -9,7 +9,7 @@ import gin
 @gin.configurable
 class Environment():
     def __init__(self, plants, no_of_channels, uplink_coefficients, downlink_coefficients, controllability,
-                  include_zeros=False, cost_type="log-cost", algorithm="DQN"):
+                  include_zeros=False, cost_type="log-cost", algorithm="DQN", setup="learning-curve"):
         self.plants = plants
         self.controllability = controllability
         self.N = len(plants)
@@ -18,7 +18,7 @@ class Environment():
         self.downlink_coefficients = downlink_coefficients
         self.state = np.ones((2 * self.N, controllability + 1), dtype=int)
         self.state_shape = (self.state.shape[0], self.state.shape[1])
-        self.log_file = f"log_evaluation_data_{self.M}-{self.N}_{algorithm}_{cost_type}.npy"
+        self.log_file = f"log_{setup}_{self.M}-{self.N}_{algorithm}_{cost_type}.npy"
 
         self._game_over = False
         if include_zeros:
