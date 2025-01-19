@@ -9,7 +9,7 @@
 
 # Hyperparameters for PPOAgent
 PPOAgent.num_layers = 1
-PPOAgent.hidden_units = 512
+PPOAgent.hidden_units = 1024
 PPOAgent.activation = 'tanh'
 
 PPOAgent.update_period = 200
