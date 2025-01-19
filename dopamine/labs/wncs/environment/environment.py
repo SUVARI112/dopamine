@@ -63,7 +63,6 @@ class Environment():
         np.random.seed(self.seed_value) 
 
     def step(self, action):
-
         # update controllers state estimate
         for plant in self.plants:
             plant.controller.update_state_estimate()

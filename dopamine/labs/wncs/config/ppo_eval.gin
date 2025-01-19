@@ -6,7 +6,7 @@
 Environment.include_zeros = False
 Environment.cost_type = "log-cost" 
 Environment.algorithm="ppo"
-# Environment.setup= "evaluation"
+Environment.setup="evaluation"
 
 # Hyperparameters for PPOAgent
 PPOAgent.num_layers = 2
@@ -36,14 +36,12 @@ PPOAgent.entropy_coefficient = 0.01
 PPOAgent.clip_critic_loss = True
 PPOAgent.seed = None  # Seed with the current time
 
-create_runner.schedule = 'continuous_train'
+create_runner.schedule = 'eval'
 create_agent.agent_name = 'ppo'
 create_agent.debug_mode = True
-Runner.num_iterations = 1
-Runner.training_steps = 500_000
-Runner.evaluation_steps = 500
-Runner.max_steps_per_episode = 500
-Runner.clip_rewards=False
+EvalRunner.num_iterations = 10
+EvalRunner.evaluation_steps = 500
+EvalRunner.max_steps_per_episode = 500
 
 ReplayBuffer.max_capacity = %update_period
 ReplayBuffer.batch_size = %batch_size
