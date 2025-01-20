@@ -3,14 +3,14 @@
 #   by John Schulman et al.
 #   https://arxiv.org/abs/1707.06347
 
-Environment.include_zeros = False
+Environment.include_zeros = True
 Environment.cost_type = "log-cost" 
-Environment.algorithm="ppo"
-Environment.setup="evaluation"
+Environment.algorithm = "ppo"
+Environment.setup = "evaluation"
 
 # Hyperparameters for PPOAgent
-PPOAgent.num_layers = 2
-PPOAgent.hidden_units = 256
+PPOAgent.num_layers = 1
+PPOAgent.hidden_units = 512
 PPOAgent.activation = 'tanh'
 
 update_period = 200

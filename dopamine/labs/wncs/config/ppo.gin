@@ -9,8 +9,8 @@ Environment.algorithm="ppo"
 # Environment.setup= "evaluation"
 
 # Hyperparameters for PPOAgent
-PPOAgent.num_layers = 2
-PPOAgent.hidden_units = 256
+PPOAgent.num_layers = 1
+PPOAgent.hidden_units = 1024
 PPOAgent.activation = 'tanh'
 
 update_period = 200
