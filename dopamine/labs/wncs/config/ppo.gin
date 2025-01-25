@@ -15,8 +15,8 @@ PPOAgent.num_layers = 1
 PPOAgent.hidden_units = 1024
 PPOAgent.activation = 'tanh'
 
-update_period = 200
-batch_size = 50 
+update_period = 10
+batch_size = 10 
 
 PPOAgent.update_period = %update_period
 PPOAgent.optimizer = 'adam'
