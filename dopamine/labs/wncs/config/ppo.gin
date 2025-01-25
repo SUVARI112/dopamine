@@ -6,7 +6,7 @@
 Environment.include_zeros = False
 Environment.cost_type = "log-cost" 
 Environment.algorithm="ppo"
-Environment.aoi_threshold=20
+Environment.aoi_threshold=25
 Environment.terminal_cost=10000
 # Environment.setup= "evaluation"
 
@@ -15,8 +15,8 @@ PPOAgent.num_layers = 1
 PPOAgent.hidden_units = 1024
 PPOAgent.activation = 'tanh'
 
-update_period = 10
-batch_size = 10 
+update_period = 15
+batch_size = 15 
 
 PPOAgent.update_period = %update_period
 PPOAgent.optimizer = 'adam'
