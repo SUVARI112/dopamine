@@ -43,7 +43,6 @@ create_agent.agent_name = 'ppo'
 create_agent.debug_mode = True
 Runner.num_iterations = 1
 Runner.training_steps = 500_000
-TrainRunner.evaluation_steps = 500
 TrainRunner.max_steps_per_episode = 500
 Runner.clip_rewards=False
 
