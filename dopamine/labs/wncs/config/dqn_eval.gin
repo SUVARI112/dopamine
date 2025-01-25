@@ -1,0 +1,38 @@
+# Hyperparameters follow the classic Nature DQN, but we modify as necessary to
+# match those used in Rainbow (Hessel et al., 2018), to ensure apples-to-apples
+# comparison.
+
+Environment.include_zeros = False
+Environment.cost_type = "log-cost" 
+Environment.algorithm="dqn"
+Environment.setup = "evaluation"
+
+JaxDQNAgent.gamma = 0.950
+JaxDQNAgent.update_horizon = 1
+JaxDQNAgent.min_replay_history = 1_000  # agent steps
+JaxDQNAgent.warm_start_steps = 5_000
+JaxDQNAgent.update_period = 1
+JaxDQNAgent.target_update_period = 1  # agent steps
+JaxDQNAgent.epsilon_train = 0.01
+JaxDQNAgent.epsilon_eval = 0.001
+JaxDQNAgent.epsilon_decay_period = 50_000  # agent steps
+# Note: We are using the Adam optimizer by default for JaxDQN, which differs
+#       from the original NatureDQN and the dopamine TensorFlow version. In
+#       the experiments we have ran, we have found that using Adam yields
+#       improved training performance.
+JaxDQNAgent.optimizer = 'adam'
+create_optimizer.anneal_learning_rate=False
+create_optimizer.initial_learning_rate= 0.001
+create_optimizer.final_learning_rate=0.0001
+create_optimizer.anneal_steps=24_000
+create_optimizer.eps = 1.5e-4
+
+create_runner.schedule = 'eval'
+create_agent.agent_name = 'jax_dqn'
+create_agent.debug_mode = True
+EvalRunner.num_iterations = 10
+EvalRunner.evaluation_steps = 500
+EvalRunner.max_steps_per_episode = 500
+
+ReplayBuffer.max_capacity = 250_000
+ReplayBuffer.batch_size = 32

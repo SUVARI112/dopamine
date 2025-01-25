@@ -61,6 +61,22 @@ class Environment():
         self.action_frequencies = np.zeros(len(self.action_list), dtype=int)
         self.action_frequency_file = f"action_freq_{setup}_{self.M}-{self.N}_{algorithm}_{cost_type}.npy"
 
+        # Add max AoI tracking
+        self.max_aoi_stats = {
+            'episodes': {},  # Will store max values for each episode
+            'current_max_tau': 1,  # Current episode's max tau
+            'current_max_eta': 1,  # Current episode's max eta
+        }
+        self.max_aoi_file = f"max_aoi_{setup}_{self.M}-{self.N}_{algorithm}_{cost_type}.npy"
+
+        # Add termination tracking
+        self.termination_stats = {
+            'total_episodes': 0,
+            'aoi_violations': 0,
+            'violation_steps': []
+        }
+        self.termination_stats_file = f"termination_stats_{setup}_{self.M}-{self.N}_{algorithm}_{cost_type}.npy"
+
     def close(self):
         self.reset()
         pass
@@ -177,6 +193,10 @@ class Environment():
 
         # Check for AoI threshold violation
         aoi_violation = self.check_aoi_thresholds()
+
+        # Update max AoI values
+        self.update_max_aoi()
+
         if aoi_violation:
             self._game_over = True
             # Apply terminal cost
@@ -186,6 +206,20 @@ class Environment():
             'aoi_violation': aoi_violation,
             'empirical_cost': empirical_cost[0][0] if isinstance(empirical_cost, np.ndarray) else empirical_cost
         }
+    
+    def update_max_aoi(self):
+        """
+        Update the maximum AoI values for the current episode
+        """
+        # Get max tau value across all plants
+        max_tau = np.max(self.state[:self.N])
+        # Get max eta value across all plants
+        max_eta = np.max(self.state[self.N:])
+        
+        # Update current episode maximums
+        self.max_aoi_stats['current_max_tau'] = max(self.max_aoi_stats['current_max_tau'], max_tau)
+        self.max_aoi_stats['current_max_eta'] = max(self.max_aoi_stats['current_max_eta'], max_eta)
+
 
     def check_aoi_thresholds(self):
         """
@@ -206,6 +240,41 @@ class Environment():
                 return True
 
         return False
+
+    def save_termination_stats(self):
+        try:
+            # Load existing stats
+            existing_stats = np.load(self.termination_stats_file, allow_pickle=True).item()
+            max_aoi_data = np.load(self.max_aoi_file, allow_pickle=True).item()
+        except FileNotFoundError:
+            existing_stats = self.termination_stats.copy()
+            max_aoi_data = {'episodes': {}}
+        
+        # Update termination stats
+        existing_stats['total_episodes'] += 1
+        if self._game_over and self.check_aoi_thresholds():
+            existing_stats['aoi_violations'] += 1
+            existing_stats['violation_steps'].append(self.step_counter)
+        
+        # Update max AoI data
+        max_aoi_data['episodes'][self.episode_number] = {
+            'max_tau': self.max_aoi_stats['current_max_tau'],
+            'max_eta': self.max_aoi_stats['current_max_eta'],
+            'steps': self.step_counter
+        }
+        
+        # Save both stats
+        np.save(self.termination_stats_file, existing_stats)
+        np.save(self.max_aoi_file, max_aoi_data)
+        
+        # Print summary
+        print(f"\nEpisode {self.episode_number} Statistics:")
+        print(f"Steps completed: {self.step_counter}")
+        print(f"Maximum τ (tau) value: {self.max_aoi_stats['current_max_tau']}")
+        print(f"Maximum η (eta) value: {self.max_aoi_stats['current_max_eta']}")
+        if self._game_over and self.check_aoi_thresholds():
+            print(f"Terminated due to AoI violation (threshold: {self.aoi_threshold})")
+            print(f"Terminal cost applied: {self.terminal_cost}")
 
     def save_action_frequencies(self):
         try:
@@ -245,6 +314,13 @@ class Environment():
         return self._game_over
 
     def reset(self):
+        # Save stats before reset
+        self.save_termination_stats()
+        
+        # Reset max AoI tracking
+        self.max_aoi_stats['current_max_tau'] = 1
+        self.max_aoi_stats['current_max_eta'] = 1
+
         self.episode_number += 1
         self._game_over = False
         self.state = np.ones((2 * self.N, self.controllability + 1), dtype=int)
