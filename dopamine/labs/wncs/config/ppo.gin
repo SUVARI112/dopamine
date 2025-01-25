@@ -6,7 +6,7 @@
 Environment.include_zeros = False
 Environment.cost_type = "log-cost" 
 Environment.algorithm="ppo"
-Environment.aoi_threshold=25
+Environment.aoi_threshold=20
 Environment.terminal_cost=10000
 # Environment.setup= "evaluation"
 
@@ -15,8 +15,8 @@ PPOAgent.num_layers = 1
 PPOAgent.hidden_units = 1024
 PPOAgent.activation = 'tanh'
 
-update_period = 15
-batch_size = 15 
+update_period = 150
+batch_size = 50 
 
 PPOAgent.update_period = %update_period
 PPOAgent.optimizer = 'adam'
@@ -43,7 +43,7 @@ create_agent.agent_name = 'ppo'
 create_agent.debug_mode = True
 Runner.num_iterations = 1
 Runner.training_steps = 500_000
-Runner.max_steps_per_episode = 10
+Runner.max_steps_per_episode = 500
 Runner.clip_rewards=False
 
 ReplayBuffer.max_capacity = %update_period
