@@ -11,8 +11,8 @@ Environment.terminal_cost=10000
 # Environment.setup= "evaluation"
 
 # Hyperparameters for PPOAgent
-PPOAgent.num_layers = 1
-PPOAgent.hidden_units = 1024
+PPOAgent.num_layers = 2
+PPOAgent.hidden_units = 512
 PPOAgent.activation = 'tanh'
 
 update_period = 150
