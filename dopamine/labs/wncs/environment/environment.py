@@ -9,7 +9,8 @@ import gin
 @gin.configurable
 class Environment():
     def __init__(self, plants, no_of_channels, uplink_coefficients, downlink_coefficients, controllability,
-                  include_zeros=False, cost_type="log-cost", algorithm="DQN", setup="learning-curve"):
+                  include_zeros=False, cost_type="log-cost", algorithm="DQN", setup="learning-curve",
+                  aoi_threshold=30, terminal_cost=None):
         self.plants = plants
         self.controllability = controllability
         self.N = len(plants)
@@ -42,6 +43,9 @@ class Environment():
             high=1e10 * np.ones_like(minimum_state),
             dtype=np.int64
         )
+
+        self.aoi_threshold = aoi_threshold if aoi_threshold is not None else float('inf')
+        self.terminal_cost = terminal_cost if terminal_cost is not None else 0
         
         # Define action space (discrete actions from 0 to 33 based on your TF implementation)
         self.action_space = spaces.Discrete(len(self.action_list))  # 0 to 33 inclusive
@@ -53,6 +57,10 @@ class Environment():
         self.step_counter = 1
         self.episode_number = 0
 
+        # Initialize action frequency tracking
+        self.action_frequencies = np.zeros(len(self.action_list), dtype=int)
+        self.action_frequency_file = f"action_freq_{setup}_{self.M}-{self.N}_{algorithm}_{cost_type}.npy"
+
     def close(self):
         self.reset()
         pass
@@ -63,6 +71,9 @@ class Environment():
         np.random.seed(self.seed_value) 
 
     def step(self, action):
+        # Track action frequency
+        self.action_frequencies[action] += 1
+
         # update controllers state estimate
         for plant in self.plants:
             plant.controller.update_state_estimate()
@@ -164,7 +175,72 @@ class Environment():
         self.step_counter += 1
         self.total_cost += empirical_cost
 
-        return self.state.copy(), -1*cost, self._game_over, {}
+        # Check for AoI threshold violation
+        aoi_violation = self.check_aoi_thresholds()
+        if aoi_violation:
+            self._game_over = True
+            # Apply terminal cost
+            cost += self.terminal_cost
+            
+        self.step_counter += 1
+        self.total_cost += empirical_cost
+
+        return self.state.copy(), -1*cost, self._game_over, {
+            'aoi_violation': aoi_violation,
+            'empirical_cost': empirical_cost[0][0] if isinstance(empirical_cost, np.ndarray) else empirical_cost
+        }
+
+    def check_aoi_thresholds(self):
+        """
+        Check if any AoI value (tau or eta) has exceeded the threshold
+        Returns:
+            bool: True if threshold is exceeded, False otherwise
+        """
+        if self.aoi_threshold == float('inf'):
+            return False
+            
+        # Check both tau and eta values for all plants
+        for plant_no in range(self.N):
+            # Check tau values (sensor measurements)
+            if np.any(self.state[plant_no] > self.aoi_threshold):
+                return True
+            # Check eta values (control inputs)
+            if np.any(self.state[self.N + plant_no] > self.aoi_threshold):
+                return True
+
+        return False
+
+    def save_action_frequencies(self):
+        try:
+            # Try to load existing data
+            existing_data = np.load(self.action_frequency_file, allow_pickle=True).item()
+            # Update episode data
+            existing_data[self.episode_number] = {
+                'frequencies': self.action_frequencies.copy(),
+                'total_steps': self.step_counter
+            }
+        except FileNotFoundError:
+            # Create new data structure if file doesn't exist
+            existing_data = {
+                self.episode_number: {
+                    'frequencies': self.action_frequencies.copy(),
+                    'total_steps': self.step_counter
+                }
+            }
+        
+        # Save updated data
+        np.save(self.action_frequency_file, existing_data)
+        
+        # Print summary statistics
+        action_probs = self.action_frequencies / self.step_counter
+        most_frequent = np.argmax(self.action_frequencies)
+        print(f"\nAction Frequency Summary (Episode {self.episode_number}):")
+        print(f"Most frequent action: {most_frequent} (Action: {self.action_list[most_frequent]})")
+        print(f"Used {(self.action_frequencies > 0).sum()}/{len(self.action_list)} possible actions")
+        print(f"Action probability distribution:")
+        for i, (freq, prob) in enumerate(zip(self.action_frequencies, action_probs)):
+            if freq > 0:
+                print(f"Action {i} ({self.action_list[i]}): {freq} times ({prob:.3f})")
 
     @property
     def game_over(self):
@@ -173,10 +249,16 @@ class Environment():
 
     def reset(self):
         self.episode_number += 1
-        self._game_over = False  # Reset the flag
+        self._game_over = False
         self.state = np.ones((2 * self.N, self.controllability + 1), dtype=int)
         for plant in self.plants:
             plant.reset()
+        
+        # Save action frequencies before resetting
+        self.save_action_frequencies()
+        
+        # Reset action frequencies for new episode
+        self.action_frequencies = np.zeros_like(self.action_frequencies)
         
         # log the episode info
         self.save_evaluation_data()
