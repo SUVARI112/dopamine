@@ -181,9 +181,6 @@ class Environment():
             self._game_over = True
             # Apply terminal cost
             cost += self.terminal_cost
-            
-        self.step_counter += 1
-        self.total_cost += empirical_cost
 
         return self.state.copy(), -1*cost, self._game_over, {
             'aoi_violation': aoi_violation,
