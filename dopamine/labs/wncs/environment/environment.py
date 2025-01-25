@@ -10,7 +10,7 @@ import gin
 class Environment():
     def __init__(self, plants, no_of_channels, uplink_coefficients, downlink_coefficients, controllability,
                   include_zeros=False, cost_type="log-cost", algorithm="DQN", setup="learning-curve",
-                  aoi_threshold=30, terminal_cost=None):
+                  aoi_threshold=None, terminal_cost=None):
         self.plants = plants
         self.controllability = controllability
         self.N = len(plants)
