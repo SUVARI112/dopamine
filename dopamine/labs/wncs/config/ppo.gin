@@ -11,7 +11,7 @@ Environment.terminal_cost=10000
 # Environment.setup= "evaluation"
 
 # Hyperparameters for PPOAgent
-PPOAgent.num_layers = 2
+PPOAgent.num_layers = 1
 PPOAgent.hidden_units = 512
 PPOAgent.activation = 'tanh'
 
@@ -25,7 +25,7 @@ PPOAgent.max_gradient_norm = 0.5
 create_optimizer.anneal_learning_rate=True
 create_optimizer.initial_learning_rate= 3e-5
 create_optimizer.final_learning_rate=1e-5
-create_optimizer.anneal_steps=50_000
+create_optimizer.anneal_steps=100_000
 create_optimizer.eps = 1e-5
 
 PPOAgent.num_epochs = 10
@@ -42,7 +42,7 @@ create_runner.schedule = 'continuous_train'
 create_agent.agent_name = 'ppo'
 create_agent.debug_mode = True
 Runner.num_iterations = 1
-Runner.training_steps = 500_000
+Runner.training_steps = 1_000_000
 Runner.max_steps_per_episode = 500
 Runner.clip_rewards=False
 
