@@ -187,7 +187,7 @@ class Environment():
         elif self.cost_type == "state-cost":
             cost = self.state_cost(self.state)
         elif self.cost_type == "stable-cost":
-            cost = self.stable_cost(self.state)
+            cost = self.stable_cost(empirical_cost[0][0].copy())
         else:
             cost = empirical_cost[0][0].copy()
 
