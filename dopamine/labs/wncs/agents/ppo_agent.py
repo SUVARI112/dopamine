@@ -420,7 +420,7 @@ def select_action(network_def, params, state, rng, deterministic=False):
 
     action = jax.lax.cond(
         deterministic,
-        lambda: get_deterministic_action(params, state),
+        lambda: get_stochastic_action(params, state, rng2),
         lambda: get_stochastic_action(params, state, rng2)
     )
     
