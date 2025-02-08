@@ -4,10 +4,10 @@
 #   https://arxiv.org/abs/1707.06347
 
 Environment.include_zeros = False
-Environment.cost_type = "log-cost" 
+Environment.cost_type = "stable-cost" 
 Environment.algorithm="ppo"
-Environment.aoi_threshold=30
-Environment.terminal_cost=10000
+# Environment.aoi_threshold=30
+# Environment.terminal_cost=10000
 # Environment.setup= "evaluation"
 
 # Hyperparameters for PPOAgent

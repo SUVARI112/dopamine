@@ -5,6 +5,7 @@ import numpy as np
 from itertools import combinations, permutations
 from gym import spaces
 import gin
+from bisect import bisect_right
 
 @gin.configurable
 class Environment():
@@ -185,6 +186,8 @@ class Environment():
             cost = self.log_cost(empirical_cost[0][0].copy())
         elif self.cost_type == "state-cost":
             cost = self.state_cost(self.state)
+        elif self.cost_type == "stable-cost":
+            cost = self.stable_cost(self.state)
         else:
             cost = empirical_cost[0][0].copy()
 
@@ -339,6 +342,12 @@ class Environment():
         self.step_counter = 0
 
         return self.state
+
+
+    def stable_cost(self, empirical_cost):
+        thresholds = [10, 30, 50, 100, 500, 1000, 10000]
+        costs = [0, 1, 2, 3, 4, 5, 10, 20]
+        return costs[bisect_right(thresholds, empirical_cost)]
 
     def log_cost(self,  empirical_cost):
 
