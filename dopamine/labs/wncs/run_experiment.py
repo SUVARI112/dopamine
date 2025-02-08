@@ -898,7 +898,7 @@ class EvalRunner(Runner):
             raise ValueError(f'Failed to load checkpoint {latest_checkpoint}')
         
         # Always set eval mode
-        self._agent.eval_mode = True
+        self._agent.eval_mode = False
         logging.info('Loaded checkpoint from iteration %d', latest_checkpoint)
 
     def _run_eval_phase(self, statistics):
