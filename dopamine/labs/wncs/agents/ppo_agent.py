@@ -427,48 +427,6 @@ def select_action(network_def, params, state, rng, deterministic=False):
     action = jax.lax.stop_gradient(action)
     return rng, action
 
-@functools.partial(jax.jit, static_argnames=['network_def', 'deterministic'])
-def select_action(network_def, params, state, rng, deterministic=False):
-    """Sample or select deterministically an action from the policy network.
-    
-    Args:
-        network_def: Linen Module to use for inference.
-        params: Linen params (frozen dict) to use for inference.
-        state: input state to use for inference.
-        rng: Jax random number generator.
-        deterministic: bool, if True selects the most probable action instead of sampling.
-
-    Returns:
-        rng: Jax random number generator.
-        action: The selected action.
-    """
-    rng, rng2 = jax.random.split(rng)
-
-    def get_deterministic_action(params, state):
-        # For deterministic selection, get logits and take argmax
-        shared_output = network_def.apply(
-            params, state, method=network_def._shared_network
-        )
-        logits = network_def.apply(
-            params, shared_output, method=network_def._actor
-        )
-        return jnp.argmax(logits)
-
-    def get_stochastic_action(params, state, rng2):
-        # For stochastic selection, use the network's actor method
-        return network_def.apply(
-            params, state, rng2, method=network_def.actor
-        ).sampled_action
-
-    action = jax.lax.cond(
-        deterministic,
-        lambda: get_deterministic_action(params, state),
-        lambda: get_stochastic_action(params, state, rng2)
-    )
-    
-    action = jax.lax.stop_gradient(action)
-    return rng, action
-
 @gin.configurable
 class PPOAgent(dqn_agent.JaxDQNAgent):
   """A JAX implementation of the PPO agent."""
