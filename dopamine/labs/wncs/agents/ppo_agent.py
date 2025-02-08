@@ -391,7 +391,7 @@ def train_minibatch(
 
 
 @functools.partial(jax.jit, static_argnames=['network_def'])
-def select_action(network_def, params, state, rng):
+def select_action(network_def, params, state, rng, deterministic=False):
   """Sample an action to take from the current policy network.
 
   This obtains a mean and variance from the input policy network, and samples an
@@ -402,15 +402,29 @@ def select_action(network_def, params, state, rng):
     params: Linen params (frozen dict) to use for inference.
     state: input state to use for inference.
     rng: Jax random number generator.
+    deterministic: bool, if True selects the most probable action instead of sampling.
 
   Returns:
     rng: Jax random number generator.
     action: The selected action.
   """
-  rng, rng2 = jax.random.split(rng)
-  action = network_def.apply(
-      params, state, rng2, method=network_def.actor
-  ).sampled_action
+  
+  if deterministic:
+      # For deterministic selection, get logits and take argmax
+      shared_output = network_def.apply(
+          params, state, method=network_def._shared_network
+      )
+      logits = network_def.apply(
+          params, shared_output, method=network_def._actor
+      )
+      action = jnp.argmax(logits)
+  else:
+      rng, rng2 = jax.random.split(rng)
+      # For stochastic selection, sample from the distribution
+      action = network_def.apply(
+          params, state, rng2, method=network_def.actor
+      ).sampled_action
+  
   action = jax.lax.stop_gradient(action)
   return rng, action
 
@@ -614,6 +628,7 @@ class PPOAgent(dqn_agent.JaxDQNAgent):
         self.network_params,
         self.state,
         self._rng,
+        deterministic=self.eval_mode
     )
     self.action = np.asarray(self.action)
     return self.action
@@ -643,6 +658,7 @@ class PPOAgent(dqn_agent.JaxDQNAgent):
         self.network_params,
         self.state,
         self._rng,
+        deterministic=self.eval_mode
     )
     self.action = np.asarray(self.action)
     return self.action
