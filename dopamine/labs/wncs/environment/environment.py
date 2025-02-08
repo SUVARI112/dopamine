@@ -347,8 +347,8 @@ class Environment():
     def stable_cost(self, empirical_cost):
         # thresholds = [10, 30, 50, 100, 500, 1000, 10000]
         # costs = [0, 1, 2, 3, 4, 5, 10, 20]
-        thresholds = [10, 30, 50, 100, 150, 200, 300, 1000, 10000]
-        costs =      [0,   1,  2,   3,   4,   5,   6,    8, 12,   20]
+        thresholds = [10, 30, 50, 100, 200, 300, 1000, 10000]
+        costs =      [0,   1,  2,   3,   5,   6,    8, 12,   20]
         return costs[bisect_right(thresholds, empirical_cost)]
 
     def log_cost(self,  empirical_cost):
