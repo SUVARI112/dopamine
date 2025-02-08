@@ -446,17 +446,15 @@ def select_action(network_def, params, state, rng, deterministic=False):
     rng, rng2 = jax.random.split(rng)
 
     def get_deterministic_action(params, state):
-        # For deterministic selection, get logits and take argmax
-        shared_output = network_def.apply(
-            params, state, method=network_def._shared_network
+        # For deterministic selection, use actor method without a key
+        # This will give us the logits directly
+        actor_output = network_def.apply(
+            params, state, action=None, method=network_def.actor
         )
-        logits = network_def.apply(
-            params, shared_output, method=network_def._actor
-        )
-        return jnp.argmax(logits)
+        return jnp.argmax(actor_output.log_probability)
 
     def get_stochastic_action(params, state, rng2):
-        # For stochastic selection, use the network's actor method
+        # For stochastic selection, use the network's actor method with a key
         return network_def.apply(
             params, state, rng2, method=network_def.actor
         ).sampled_action
