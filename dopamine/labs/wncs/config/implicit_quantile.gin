@@ -3,7 +3,7 @@
 # comparison.
 
 Environment.include_zeros = False
-Environment.cost_type = "state-cost" 
+Environment.cost_type = "stable-cost" 
 Environment.algorithm="iqn"
 
 JaxImplicitQuantileAgent.kappa = 1.0
