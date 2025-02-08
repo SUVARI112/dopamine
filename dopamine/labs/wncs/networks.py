@@ -888,7 +888,6 @@ class PPODiscreteActorCriticNetwork(nn.Module):
 
 @gin.configurable
 class PPODiscreteActorCriticNetworkWCNS(nn.Module):
-    """Convolutional actor critic value and policy networks."""
 
     action_shape: Tuple[int, ...]
     num_layers: int
@@ -935,3 +934,13 @@ class PPODiscreteActorCriticNetworkWCNS(nn.Module):
         shared_output = self._shared_network(state)
         value = self._critic(shared_output)
         return continuous_networks.PPOCriticOutput(value)
+    
+    def get_logits(self, state: jnp.ndarray) -> jnp.ndarray:
+        shared_output = self._shared_network(state)
+        logits = self._actor(shared_output)
+        return logits
+
+    def get_deterministic_action(self, state: jnp.ndarray) -> jnp.ndarray:
+        logits = self.get_logits(state)
+        # For deterministic selection, simply take argmax of logits
+        return jnp.argmax(logits, axis=-1)
