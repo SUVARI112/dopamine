@@ -6,8 +6,8 @@ import dopamine.labs.wncs.networks
 import dopamine.labs.wncs.atari_lib
 import dopamine.labs.wncs.run_experiment
 
-Environment.include_zeros = True
-Environment.cost_type = "log-cost" 
+Environment.include_zeros = False
+Environment.cost_type = "stable-cost" 
 Environment.algorithm="rainbow"
 
 JaxDQNAgent.gamma = 0.99
@@ -25,8 +25,8 @@ JaxFullRainbowAgent.dueling = True
 JaxFullRainbowAgent.double_dqn = True
 JaxFullRainbowAgent.num_atoms = 51
 # JaxFullRainbowAgent.vmax = 10.
-JaxFullRainbowAgent.vmin = -10000
-JaxFullRainbowAgent.vmax = -200
+JaxFullRainbowAgent.vmin = -50
+JaxFullRainbowAgent.vmax = 0
 JaxFullRainbowAgent.replay_scheme = 'prioritized'
 
 # Note these parameters are different from C51's.
@@ -52,7 +52,7 @@ create_runner.schedule = 'continuous_train'
 create_agent.agent_name = 'full_rainbow'
 create_agent.debug_mode = True
 Runner.num_iterations = 1
-Runner.training_steps = 250_000
+Runner.training_steps = 500_000
 Runner.evaluation_steps = 500
 Runner.max_steps_per_episode = 500
 Runner.clip_rewards = False
