@@ -1,20 +1,3 @@
-*Thinking...*
-
-> I'll create a comprehensive README.md file for the GitHub repository. The README should cover:
-> 
-> 1. Introduction and paper reference
-> 2. Project structure
-> 3. Installation and dependencies
-> 4. How to run the experiments
-> 5. Configuration options
-> 6. Description of the environment and agents
-> 7. Example runs for different algorithms
-> 8. Results interpretation
-> 9. Troubleshooting
-> 10. Citation information
-> 
-> Let me draft this in markdown format:
-
 # Wireless Networked Control Systems (WNCS) with Deep Reinforcement Learning
 
 This repository implements the paper ["Deep Reinforcement Learning for Wireless Scheduling in Distributed Networked Control"](https://arxiv.org/abs/2109.12562) by Wanchun Liu et al. (2022). It provides a comprehensive framework for studying transmission scheduling in distributed Wireless Networked Control Systems (WNCS) using Deep Reinforcement Learning (DRL).
