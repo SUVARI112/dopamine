@@ -1,178 +1,299 @@
-# Dopamine
-[Getting Started](#getting-started) |
-[Docs][docs] |
-[Baseline Results][baselines] |
-[Changelist](https://google.github.io/dopamine/docs/changelist)
+*Thinking...*
 
-<div align="center">
-  <img src="https://google.github.io/dopamine/images/dopamine_logo.png"><br><br>
-</div>
+> I'll create a comprehensive README.md file for the GitHub repository. The README should cover:
+> 
+> 1. Introduction and paper reference
+> 2. Project structure
+> 3. Installation and dependencies
+> 4. How to run the experiments
+> 5. Configuration options
+> 6. Description of the environment and agents
+> 7. Example runs for different algorithms
+> 8. Results interpretation
+> 9. Troubleshooting
+> 10. Citation information
+> 
+> Let me draft this in markdown format:
 
-Dopamine is a research framework for fast prototyping of reinforcement learning
-algorithms. It aims to fill the need for a small, easily grokked codebase in
-which users can freely experiment with wild ideas (speculative research).
+# Wireless Networked Control Systems (WNCS) with Deep Reinforcement Learning
 
-Our design principles are:
+This repository implements the paper ["Deep Reinforcement Learning for Wireless Scheduling in Distributed Networked Control"](https://arxiv.org/abs/2109.12562) by Wanchun Liu et al. (2022). It provides a comprehensive framework for studying transmission scheduling in distributed Wireless Networked Control Systems (WNCS) using Deep Reinforcement Learning (DRL).
 
-* _Easy experimentation_: Make it easy for new users to run benchmark
-                          experiments.
-* _Flexible development_: Make it easy for new users to try out research ideas.
-* _Compact and reliable_: Provide implementations for a few, battle-tested
-                          algorithms.
-* _Reproducible_: Facilitate reproducibility in results. In particular, our
-                  setup follows the recommendations given by
-                  [Machado et al. (2018)][machado].
+## Introduction
 
-Dopamine supports the following agents, implemented with jax:
+Wireless Networked Control Systems (WNCS) are a critical technology for Industry 4.0, enabling flexible automation through wireless communication. A key challenge in WNCS is scheduling transmissions between sensors, controllers, and actuators over limited wireless resources. This project implements the fully distributed WNCS model described in the paper, where:
 
-* DQN ([Mnih et al., 2015][dqn])
-* C51 ([Bellemare et al., 2017][c51])
-* Rainbow ([Hessel et al., 2018][rainbow])
-* IQN ([Dabney et al., 2018][iqn])
-* SAC ([Haarnoja et al., 2018][sac])
-* PPO ([Schulman et al., 2017][ppo])
+- Multiple plants are controlled over a shared wireless network
+- A limited number of frequency channels must be allocated
+- Both uplink (sensor→controller) and downlink (controller→actuator) transmissions must be scheduled
+- Spatial diversity exists in wireless communication (varying reliability for different links)
 
-For more information on the available agents, see the [docs](https://google.github.io/dopamine/docs).
+The paper presents a novel approach using Deep Reinforcement Learning (DRL) for transmission scheduling to minimize system cost while maintaining stability.
 
-Many of these agents also have a tensorflow (legacy) implementation, though
-newly added agents are likely to be jax-only.
-
-This is not an official Google product.
-
-## Getting Started
-
-
-We provide docker containers for using Dopamine.
-Instructions can be found [here](https://google.github.io/dopamine/docker/).
-
-Alternatively, Dopamine can be installed from source (preferred) or installed
-with pip. For either of these methods, continue reading at prerequisites.
-
-### Prerequisites
-
-Dopamine supports Atari environments and Mujoco environments. Install the
-environments you intend to use before you install Dopamine:
-
-**Atari**
-
-1. These should now come packaged with
-   [ale_py](https://github.com/Farama-Foundation/Arcade-Learning-Environment).
-1. You may need to manually run some steps to properly install `baselines`, see
-   [instructions](https://github.com/openai/baselines).
-
-**Mujoco**
-
-1. Install Mujoco and get a license
-[here](https://github.com/openai/mujoco-py#install-mujoco).
-2. Run `pip install mujoco-py` (we recommend using a
-[virtual environment](virtualenv)).
-
-### Installing from Source
-
-
-The most common way to use Dopamine is to install it from source and modify
-the source code directly:
+## Repository Structure
 
 ```
-git clone https://github.com/google/dopamine
+dopamine/labs/wncs/
+│   ├── __init__.py
+│   ├── atari_lib.py
+│   ├── env.py
+│   ├── networks.py
+│   ├── run_experiment.py
+│   ├── train.py
+│   ├── agents/
+│   │   ├── dqn_agent.py
+│   │   ├── full_rainbow_agent.py
+│   │   ├── implicit_quantile_agent.py
+│   │   ├── ppo_agent.py
+│   │   └── rainbow_agent.py
+│   ├── config/
+│   │   ├── c51.gin
+│   │   ├── dqn.gin
+│   │   ├── dqn_eval.gin
+│   │   ├── full_rainbow.gin
+│   │   ├── implicit_quantile.gin
+│   │   ├── ppo.gin
+│   │   └── ppo_eval.gin
+│   └── environment/
+│       ├── __init__.py
+│       ├── controller.py
+│       ├── environment.py
+│       ├── kalman_filter.py
+│       └── plant.py
 ```
 
-After cloning, install dependencies:
+## Installation
 
-```
-pip install -r dopamine/requirements.txt
-```
+### Dependencies
 
-Dopamine supports tensorflow (legacy) and jax (actively maintained) agents.
-View the [Tensorflow documentation](https://www.tensorflow.org/install) for
-more information on installing tensorflow.
+This project is built on the [Dopamine RL framework](https://github.com/google/dopamine). To install all required dependencies:
 
-Note: We recommend using a [virtual environment](virtualenv) when working with Dopamine.
+```bash
+# Create a virtual environment (recommended)
+python -m venv wncs_env
+source wncs_env/bin/activate  # On Windows: wncs_env\Scripts\activate
 
-### Installing with Pip
-
-Note: We strongly recommend installing from source for most users.
-
-Installing with pip is simple, but Dopamine is designed to be modified
-directly. We recommend installing from source for writing your own experiments.
-
-```
-pip install dopamine-rl
+# Install required packages
+pip install -r requirements.txt
 ```
 
-### Running tests
+The `requirements.txt` file should include:
+```
+tensorflow>=2.4.0
+jax>=0.2.9
+jaxlib>=0.1.59
+flax>=0.3.0
+optax>=0.0.6
+gin-config>=0.4.0
+numpy>=1.19.0
+gym>=0.17.0
+tqdm>=4.41.0
+matplotlib>=3.3.0
+```
 
-You can test whether the installation was successful by running the following
-from the dopamine root directory.
+## Running Experiments
+
+### Quick Start
+
+To run an experiment with default settings (DQN algorithm with 3 plants and 3 frequency channels):
+
+```bash
+python -m dopamine.labs.wncs.train \
+  --base_dir=/path/to/save/results \
+  --gin_files=dopamine/labs/wncs/config/dqn.gin
+```
+
+### Selecting Different Algorithms
+
+The repository supports multiple reinforcement learning algorithms. To specify which algorithm to use, select the corresponding gin config file:
+
+```bash
+# For DQN
+python -m dopamine.labs.wncs.train \
+  --base_dir=/path/to/save/results \
+  --gin_files=dopamine/labs/wncs/config/dqn.gin
+
+# For PPO
+python -m dopamine.labs.wncs.train \
+  --base_dir=/path/to/save/results \
+  --gin_files=dopamine/labs/wncs/config/ppo.gin
+
+# For Implicit Quantile Networks (IQN)
+python -m dopamine.labs.wncs.train \
+  --base_dir=/path/to/save/results \
+  --gin_files=dopamine/labs/wncs/config/implicit_quantile.gin
+
+# For Full Rainbow
+python -m dopamine.labs.wncs.train \
+  --base_dir=/path/to/save/results \
+  --gin_files=dopamine/labs/wncs/config/full_rainbow.gin
+```
+
+### Evaluation Mode
+
+To evaluate a trained agent without further training:
+
+```bash
+python -m dopamine.labs.wncs.train \
+  --base_dir=/path/to/saved/results \
+  --gin_files=dopamine/labs/wncs/config/dqn_eval.gin
+```
+
+### Custom Configurations
+
+You can override default parameters using the `--gin_bindings` flag:
+
+```bash
+python -m dopamine.labs.wncs.train \
+  --base_dir=/path/to/save/results \
+  --gin_files=dopamine/labs/wncs/config/dqn.gin \
+  --gin_bindings="Runner.training_steps=100000" \
+  --gin_bindings="Environment.cost_type='stable-cost'"
+```
+
+Common customization options include:
+- `Environment.include_zeros`: Whether to include idle actions (default: False)
+- `Environment.cost_type`: Cost function type ('log-cost', 'stable-cost', or 'state-cost')
+- `Environment.aoi_threshold`: Maximum allowed Age-of-Information (default: None)
+- `Environment.terminal_cost`: Cost applied when AoI exceeds threshold (default: None)
+- `Runner.training_steps`: Number of training steps per iteration
+- `Runner.max_steps_per_episode`: Maximum episode length
+
+## Environment Details
+
+### System Model
+
+The environment implements a distributed WNCS with:
+
+- **N plants**: Linear time-invariant systems with process noise
+- **M frequencies**: Shared wireless communication channels
+- **Smart sensors**: With Kalman filters for state estimation
+- **Controller**: Schedules transmissions and generates control commands
+- **Actuators**: Apply control commands with buffers for robustness against packet losses
+
+The default configuration uses 3 plants and 3 frequency channels. Each plant is a 2-dimensional LTI system with 2-step controllability, following the paper's specifications in Section 6.
+
+### State Representation
+
+The state is represented by Age-of-Information (AoI) values:
+- τ (tau): AoI for sensor measurements at the controller
+- η (eta): AoI for control commands at the actuator
+
+### Action Space
+
+Actions determine which of the N plants' uplink or downlink transmissions are scheduled on which of the M frequency channels. The action space size is determined by all valid combinations of assignments.
+
+### Reward/Cost Function
+
+Three cost functions are available:
+1. `log-cost`: Logarithmic scaling of empirical costs
+2. `stable-cost`: Discretized cost with thresholds (default)
+3. `state-cost`: Sum of squared state values
+
+The objective is to minimize the expected total discounted cost, as defined in equation (15) of the paper.
+
+## Agents and Algorithms
+
+The repository implements several reinforcement learning algorithms:
+
+1. **DQN**: Standard Deep Q-Network
+2. **Rainbow**: DQN with distributional reinforcement learning
+3. **Implicit Quantile Networks (IQN)**: Advanced distributional RL technique
+4. **Full Rainbow**: Combines multiple DQN improvements
+5. **PPO**: Proximal Policy Optimization (actor-critic method)
+
+The paper specifically uses a Deep Q-learning approach with reduced action space, implemented in `dqn_agent.py`.
+
+## Results and Visualization
+
+Training results are saved in the specified `base_dir`. The system logs:
+
+1. **Average empirical cost**: Main performance metric
+2. **Action frequencies**: Distribution of selected actions
+3. **Maximum AoI statistics**: Tracking highest τ and η values
+4. **Termination statistics**: When episodes end due to AoI violations
+
+Results are automatically saved as numpy files that can be loaded for analysis:
+- `log_*.npy`: Average empirical costs
+- `action_freq_*.npy`: Action frequency statistics
+- `max_aoi_*.npy`: Maximum AoI statistics
+- `termination_stats_*.npy`: Termination statistics
+
+To visualize results:
+
+```python
+import numpy as np
+import matplotlib.pyplot as plt
+
+# Load results
+costs = np.load('path/to/base_dir/log_learning-curve_3-3_dqn_log-cost.npy')
+
+# Plot learning curve
+plt.figure(figsize=(10, 6))
+plt.plot(costs)
+plt.xlabel('Episode')
+plt.ylabel('Average Empirical Cost')
+plt.title('DQN Learning Curve')
+plt.grid(True)
+plt.savefig('learning_curve.png')
+plt.show()
+```
+
+## Reproducing Paper Results
+
+To reproduce the main results from the paper:
+
+1. **DQN with reduced action space (Section 5.2)**:
+```bash
+python -m dopamine.labs.wncs.train \
+  --base_dir=results/dqn_reduced \
+  --gin_files=dopamine/labs/wncs/config/dqn.gin
+```
+
+2. **Comparison with benchmark policies**:
+The system automatically logs performance metrics for comparison with the benchmark policies mentioned in the paper (random, round-robin, and greedy policies).
+
+## Troubleshooting
+
+Common issues and solutions:
+
+1. **Out of memory errors**: Reduce batch size or network size in the gin config
+```bash
+--gin_bindings="ReplayBuffer.batch_size=16"
+```
+
+2. **Training instability**: Adjust learning rate
+```bash
+--gin_bindings="create_optimizer.initial_learning_rate=0.0001"
+```
+
+3. **Agent not exploring enough**: Increase exploration parameter
+```bash
+--gin_bindings="JaxDQNAgent.epsilon_train=0.1"
+```
+
+4. **Model not improving**: Try a different cost function
+```bash
+--gin_bindings="Environment.cost_type='stable-cost'"
+```
+
+## Citation
+
+If you use this code, please cite the original paper:
 
 ```
-export PYTHONPATH=$PYTHONPATH:$PWD
-python -m tests.dopamine.atari_init_test
-```
-
-## Next Steps
-
-View the [docs][docs] for more information on training agents.
-
-We supply [baselines][baselines] for each Dopamine agent.
-
-We also provide a set of [Colaboratory notebooks](https://github.com/google/dopamine/tree/master/dopamine/colab)
-which demonstrate how to use Dopamine.
-
-## References
-
-[Bellemare et al., *The Arcade Learning Environment: An evaluation platform for
-general agents*. Journal of Artificial Intelligence Research, 2013.][ale]
-
-[Machado et al., *Revisiting the Arcade Learning Environment: Evaluation
-Protocols and Open Problems for General Agents*, Journal of Artificial
-Intelligence Research, 2018.][machado]
-
-[Hessel et al., *Rainbow: Combining Improvements in Deep Reinforcement Learning*.
-Proceedings of the AAAI Conference on Artificial Intelligence, 2018.][rainbow]
-
-[Mnih et al., *Human-level Control through Deep Reinforcement Learning*. Nature,
-2015.][dqn]
-
-[Schaul et al., *Prioritized Experience Replay*. Proceedings of the International
-Conference on Learning Representations, 2016.][prioritized_replay]
-
-[Haarnoja et al., *Soft Actor-Critic Algorithms and Applications*,
-arXiv preprint arXiv:1812.05905, 2018.][sac]
-
-[Schulman et al., *Proximal Policy Optimization Algorithms*.][ppo]
-
-## Giving credit
-
-If you use Dopamine in your work, we ask that you cite our
-[white paper][dopamine_paper]. Here is an example BibTeX entry:
-
-```
-@article{castro18dopamine,
-  author    = {Pablo Samuel Castro and
-               Subhodeep Moitra and
-               Carles Gelada and
-               Saurabh Kumar and
-               Marc G. Bellemare},
-  title     = {Dopamine: {A} {R}esearch {F}ramework for {D}eep {R}einforcement {L}earning},
-  year      = {2018},
-  url       = {http://arxiv.org/abs/1812.06110},
-  archivePrefix = {arXiv}
+@article{liu2022deep,
+  title={Deep Reinforcement Learning for Wireless Scheduling in Distributed Networked Control},
+  author={Liu, Wanchun and Huang, Kang and Quevedo, Daniel E and Vucetic, Branka and Li, Yonghui},
+  journal={arXiv preprint arXiv:2109.12562},
+  year={2022}
 }
 ```
 
+## License
 
-[docs]: https://google.github.io/dopamine/docs/
-[baselines]: https://google.github.io/dopamine/baselines
-[machado]: https://jair.org/index.php/jair/article/view/11182
-[ale]: https://jair.org/index.php/jair/article/view/10819
-[dqn]: https://storage.googleapis.com/deepmind-media/dqn/DQNNaturePaper.pdf
-[a3c]: http://proceedings.mlr.press/v48/mniha16.html
-[prioritized_replay]: https://arxiv.org/abs/1511.05952
-[c51]: http://proceedings.mlr.press/v70/bellemare17a.html
-[rainbow]: https://www.aaai.org/ocs/index.php/AAAI/AAAI18/paper/download/17204/16680
-[iqn]: https://arxiv.org/abs/1806.06923
-[sac]: https://arxiv.org/abs/1812.05905
-[ppo]: https://arxiv.org/abs/1707.06347
-[dopamine_paper]: https://arxiv.org/abs/1812.06110
-[vitualenv]: https://docs.python.org/3/library/venv.html#creating-virtual-environments
+This project is licensed under the Apache License 2.0 - see the LICENSE file for details.
+
+## Acknowledgments
+
+This implementation is based on the [Dopamine RL framework](https://github.com/google/dopamine) developed by Google.
