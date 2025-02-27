@@ -1,3 +1,5 @@
+This implementation is based on the [Dopamine RL framework](https://github.com/google/dopamine) developed by Google. All of the relevant files for this project could be found under dopamine/labs/wncs/
+
 # Wireless Networked Control Systems (WNCS) with Deep Reinforcement Learning
 
 This repository implements the paper ["Deep Reinforcement Learning for Wireless Scheduling in Distributed Networked Control"](https://arxiv.org/abs/2109.12562) by Wanchun Liu et al. (2022). It provides a comprehensive framework for studying transmission scheduling in distributed Wireless Networked Control Systems (WNCS) using Deep Reinforcement Learning (DRL).
@@ -60,20 +62,6 @@ source wncs_env/bin/activate  # On Windows: wncs_env\Scripts\activate
 pip install -r requirements.txt
 ```
 
-The `requirements.txt` file should include:
-```
-tensorflow>=2.4.0
-jax>=0.2.9
-jaxlib>=0.1.59
-flax>=0.3.0
-optax>=0.0.6
-gin-config>=0.4.0
-numpy>=1.19.0
-gym>=0.17.0
-tqdm>=4.41.0
-matplotlib>=3.3.0
-```
-
 ## Running Experiments
 
 ### Quick Start
@@ -134,10 +122,12 @@ python -m dopamine.labs.wncs.train \
   --gin_bindings="Environment.cost_type='stable-cost'"
 ```
 
+And you can of course change the gin configuration files as you need.
+
 Common customization options include:
 - `Environment.include_zeros`: Whether to include idle actions (default: False)
 - `Environment.cost_type`: Cost function type ('log-cost', 'stable-cost', or 'state-cost')
-- `Environment.aoi_threshold`: Maximum allowed Age-of-Information (default: None)
+- `Environment.aoi_threshold`: Maximum allowed Age-of-Information before the episode terminates (default: None) 
 - `Environment.terminal_cost`: Cost applied when AoI exceeds threshold (default: None)
 - `Runner.training_steps`: Number of training steps per iteration
 - `Runner.max_steps_per_episode`: Maximum episode length
@@ -272,11 +262,3 @@ If you use this code, please cite the original paper:
   year={2022}
 }
 ```
-
-## License
-
-This project is licensed under the Apache License 2.0 - see the LICENSE file for details.
-
-## Acknowledgments
-
-This implementation is based on the [Dopamine RL framework](https://github.com/google/dopamine) developed by Google.
